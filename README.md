@@ -1,6 +1,5 @@
 # **Spotipy Playlist Creator**
 
-A web-based application that shows the current location of the International Space Station (ISS) relative to the user's location, providing both the latitude and longitude of the ISS and the user's browser location. The app also fetches the current weather for the user's location and provides a fun statement about whether it's worth getting out of bed to spot the ISS based on visibility and weather conditions.
 
 ---
 
