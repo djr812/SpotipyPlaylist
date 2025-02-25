@@ -14,8 +14,8 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 application = app
 
 # Spotify credentials
-client_id = '84d9b0df0f934959bcaccd4dacc166c8'
-client_secret = 'c660934a81d74d30a75a195af8dc6c05'
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id,
                                                client_secret=client_secret,
