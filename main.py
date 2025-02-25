@@ -62,26 +62,37 @@ def process_data():
     artistArt = artist['images'][0]['url']
 
     # Album and Track details
-    trackURIs = []
-    trackArt = []
-    albumDict = {}
     albumsDict = {}
     i = 0
-
+    
     albumResults = sp.artist_albums(artistID)
     albumResults = albumResults['items']
 
-    # Build a dict (albumsDict) that contains each individual 
-    # album dictionary (albumDict)
-    for item in albumResults:  
+    # Build a dict (albumsDict) that contains each individual album dictionary (albumDict)
+    # and each album dictionary contains a dictionary of tracks
+    for item in albumResults:
         albumDict = {}  # Initialize a new albumDict for each item
+        albumID = item['id']
         
         albumDict['albumName'] = item['name']
         albumDict['albumID'] = item['id']
         albumDict['albumArt'] = item['images'][0]['url']
-        i += 1
-        # Use the albumID as the key in albumsDict
-        albumsDict[i] = albumDict
+        albumDict['tracks'] = {}  # Dictionary to hold tracks for the album
+        
+        trackResults = sp.album_tracks(albumID)
+        trackResults = trackResults['items']
+
+        for track in trackResults:
+            trackDict = {}
+            trackID = track['uri']
+
+            trackDict['trackID'] = trackID
+            trackDict['trackName'] = track['name']
+
+            albumDict['tracks'][trackID] = trackDict  # Add the track to the albumDict under 'tracks' with the trackID as the key
+
+        albumsDict[albumID] = albumDict  # Add the albumDict to albumsDict with albumID as the key
+
 
     # Respond back with a message (could be any response you want)
     return jsonify({

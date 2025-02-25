@@ -1,0 +1,74 @@
+/* Style for the container that holds the artist information */
+.artist-section {
+    display: grid;
+    grid-template-columns: 10fr 20fr; /* 1st column for info, 2nd column auto for image */
+    gap: 20px;  /* Space between the columns */
+    margin-bottom: 20px;  /* Optional: space below the artist section */
+}
+
+/* Style for the artist information section */
+.artist-info {
+    display: flex;
+    flex-direction: column; /* Arrange text info in a column */
+    justify-content: flex-start; /* Align text at the top */
+    text-align: left; /* Align text to the left of the section */
+}
+
+/* Style for the artist image */
+.artist-image {
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+    padding: 10px; /* Add padding around the image */
+    width: auto; /* Ensure the div width is only as wide as the image */
+    height: auto; /* Let the height adjust to the image's aspect ratio */
+}
+
+.artist-image img {
+    width: 300px; /* Set the image width to 300px */
+    height: 300px; /* Set the image height to 300px */
+    object-fit: cover; /* Ensure the image covers the space without distortion */
+}
+
+/* Style for the container that holds all the albums */
+.albums-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 3 equal columns */
+    gap: 20px;  /* Optional: space between items */
+    padding: 20px;  /* Optional: space around the container */
+}
+
+/* Style for each album block */
+.album {
+    border: 1px solid #ddd;  /* Optional: add border around albums */
+    padding: 10px;
+    text-align: center;
+    background-color: #f9f9f9;  /* Optional: background color for each album */
+    border-radius: 8px;  /* Optional: rounded corners */
+}
+
+.album img {
+    width: 100%;  /* Make sure the images scale to the container */
+    height: auto;
+    max-width: 300px;  /* Optional: limit the size of the image */
+}
+
+.album h3 {
+    font-size: 18px;  /* Optional: customize the album name font size */
+    margin-bottom: 10px;
+}
+
+.album p {
+    font-size: 14px;  /* Optional: customize the album name font size */
+}
+
+/* Remove the dots from the unordered list */
+.album ul {
+    list-style-type: none;  /* Removes bullet points from the list */
+    padding-left: 0;  /* Remove any default padding */
+}
+
+.album li {
+    font-size: 14px;  /* Optional: adjust font size for the list items */
+    margin-bottom: 5px;  /* Optional: add spacing between tracks */
+}
