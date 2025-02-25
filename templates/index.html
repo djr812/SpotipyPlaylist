@@ -8,6 +8,24 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
-    
+    <h1>Spotify Playlist Creator</h1>
+    <section>
+        <h2>Creating Playlists for {{ displayName }} </h2>
+        {{ displayName }} has {{ followers }} followers.
+    </section>
+    <section>
+        <h3>Search for an Artist</h3>
+        <input type="text" id="artistName" name="artistName" placeholder="Enter Artist's Name here">
+        <button type="button" onclick="sendArtist()">GO</button>
+    </section>
+    <section>
+        <div id="artistDetails">           
+        </div>
+        <div id="artistAlbums">
+        </div>
+    </section>
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
