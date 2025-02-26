@@ -41,6 +41,8 @@ function sendArtist() {
                     <p><strong>Followers:</strong> ${data.artistFollowers}</p>
                     <p><strong>Genre:</strong> ${data.artistGenre}</p>
                 </div>
+                <div id="playlist">
+                </div>
             </div>
         `;
           
@@ -99,16 +101,34 @@ function sendArtist() {
                                 // Create the "Add" button for each track
                                 const addButton = document.createElement('button');
                                 addButton.textContent = 'Add'; // Button text
-                                addButton.classList.add('add-button'); // Add a class for styling if necessary
+                                addButton.classList.add('plAddButton'); // Add a class for styling if necessary
                                 
                                 // Store the track ID in the button's data attribute
-                                addButton.setAttribute('data-track-id', track.trackID);
+                                addButton.setAttribute('plTrackID', track.trackID);
                                 
                                 // Add event listener for when the button is clicked
                                 addButton.addEventListener('click', function() {
                                     // When clicked, send the track ID to Flask
-                                    const trackID = addButton.getAttribute('data-track-id');
+                                    const trackID = addButton.getAttribute('plTrackID');
                                     console.log('Track ID to add:', trackID);
+                                    
+                                    // Send trackID to Flask via a POST request using Fetch API
+                                    fetch('/addTrack', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
+                                    })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            console.log('Track added:', data);
+                                            // Optionally update the UI based on the response, e.g., display success message
+                                            buildPlaylist(data.playlistDict);
+                                        })
+                                        .catch((error) => {
+                                            console.error('Error adding track:', error);
+                                    });
                                 });
 
                                 // Append the "Add" button after the track name
@@ -137,3 +157,35 @@ function sendArtist() {
             console.error('Error:', error);
         });
 }
+
+function buildPlaylist(data) {
+    // Get the div with the class 'playlist'
+    const playlistSection = document.getElementById('playlist');
+    
+    // Clear any existing content in the playlist div
+    playlistSection.innerHTML = '';
+
+    // Loop through the received object (assuming it's an object where the key is 'id' and the value is an array of tracks)
+    for (const id in data) {
+        if (data.hasOwnProperty(id)) {
+            // Create a new div to hold the track names for this id
+            const trackDiv = document.createElement('div');
+            trackDiv.classList.add('plTracks'); // Optional: Add a class for styling
+
+            // Get the array of tracks for this id
+            const tracks = data[id];
+            
+            const trackNameElement = document.createElement('p');
+            trackNameElement.textContent = tracks[1];
+
+                // Append the track name to the track div
+            trackDiv.appendChild(trackNameElement);
+            
+
+            // Append the track div to the playlist section
+            playlistSection.appendChild(trackDiv);
+        }
+    }
+}
+
+

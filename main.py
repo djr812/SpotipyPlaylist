@@ -41,7 +41,8 @@ playingTrack = track['item']['name']
 displayName = user['display_name']
 followers = user['followers']['total']
 
-
+# Initialize an empty dictionary to hold playlist track IDs
+playlistDict = {}
 
 @app.route("/")
 def index():
@@ -63,7 +64,10 @@ def getNewSongPlaying():
     songPlaying = {}
     track = sp.current_user_playing_track()
 
-    playingArtist = track['item']['artists'][0]['name']
+    if track['item'] != []:
+        playingArtist = track['item']['artists'][0]['name']
+    else:
+        playingArtist = ""
     playingTrack = track['item']['name']
 
     songPlaying = {'playingArtist': playingArtist, 'playingTrack': playingTrack}
@@ -133,6 +137,38 @@ def searchArtist():
         'artistArt':artistArt,
         'albumsDict':albumsDict,
         'message': f'You sent: {getArtistName}'}), 200
+
+
+@app.route('/addTrack', methods=['POST'])
+def add_track():
+    # Get the JSON data from the incoming request
+    data = request.get_json()
+    
+    # Extract the trackID from the data
+    playlistTrackID = data.get('trackID')
+    playlistTrackID = playlistTrackID[14:]
+    
+    if playlistTrackID:
+        plistIndex = len(playlistDict)+1
+        
+        # Get the track name
+        playlistTrackName = getTrackName(playlistTrackID)
+
+        # Add the trackID and trackName to the dictionary (using plistIndex as the key)
+        playlistDict[plistIndex] = [playlistTrackID, playlistTrackName]  
+
+        # Respond with a success message
+        return jsonify({"message": "Track added successfully", "playlistDict": playlistDict}), 200
+    else:
+        # Handle the case where trackID is not provided
+        return jsonify({"message": "Track ID not provided"}), 400
+
+
+def getTrackName(plTrackID):
+    trackSearch = sp.track(plTrackID, 'AU')
+    plTrackName = trackSearch["name"]
+    return plTrackName
+
 
 if __name__ == "__main__":
     app.run(debug=True)
