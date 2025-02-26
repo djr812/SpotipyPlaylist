@@ -16,17 +16,27 @@ application = app
 # Spotify credentials
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
+scope = 'user-library-read,user-read-playback-state,user-modify-playback-state'
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id,
                                                client_secret=client_secret,
                                                redirect_uri="http://localhost:5000",
-                                               scope="user-library-read"))
+                                               scope=scope))
 
 user = sp.current_user()
 
 # print(json.dumps(user, sort_keys=True, indent=4))
 
 #print(json.dumps(VARIABLE, sort_keys=True, indent=4))
+
+# Get currently playing device
+devices = sp.devices()
+deviceID = devices['devices'][0]['id']
+
+# Get current track information
+track = sp.current_user_playing_track()
+playingArtist = track['item']['artists'][0]['name']
+playingTrack = track['item']['name']
 
 displayName = user['display_name']
 followers = user['followers']['total']
@@ -43,8 +53,21 @@ def index():
     Returns     render_template
     """
     return render_template(
-        "index.html", displayName=displayName, followers=followers,
+        "index.html", displayName=displayName, followers=followers, playingArtist=playingArtist, playingTrack=playingTrack, 
     )
+
+
+@app.route('/getNewSongPlaying')
+def get_new_data():
+    # Get current track information
+    songPlaying = {}
+    track = sp.current_user_playing_track()
+    
+    playingArtist = track['item']['artists'][0]['name']
+    playingTrack = track['item']['name']
+
+    songPlaying = {'playingArtist': playingArtist, 'playingTrack': playingTrack}
+    return jsonify(songPlaying)
 
 
 @app.route('/searchArtist', methods=['POST'])
