@@ -58,11 +58,11 @@ def index():
 
 
 @app.route('/getNewSongPlaying')
-def get_new_data():
+def getNewSongPlaying():
     # Get current track information
     songPlaying = {}
     track = sp.current_user_playing_track()
-    
+
     playingArtist = track['item']['artists'][0]['name']
     playingTrack = track['item']['name']
 
@@ -71,18 +71,26 @@ def get_new_data():
 
 
 @app.route('/searchArtist', methods=['POST'])
-def process_data():
-    # Extract the input value from the request
-    artist_name = request.json.get('input')
+def searchArtist():
+    # Extract the artistName from the request
+    getArtistName = request.json.get('input')
     
-    # Do something with the input value (e.g., process it, store it, etc.)
-    searchResults = sp.search(artist_name,1,0,"artist")
+    # Search Spotify for the artistName
+    searchResults = sp.search(getArtistName,1,0,"artist")
+
+    # Extract data from searchResults
     artist = searchResults['artists']['items'][0]
     artistName = artist['name']
     artistFollowers = artist['followers']['total']
-    artistGenre = artist['genres'][0]
+    if artist['genres'] != []:
+        artistGenre = artist['genres'][0]
+    else:
+        artistGenre = ""
     artistID = artist['id']
-    artistArt = artist['images'][0]['url']
+    if artist['images'] != []:
+        artistArt = artist['images'][0]['url']
+    else:
+        artistArt = ""
 
     # Album and Track details
     albumsDict = {}
@@ -124,7 +132,7 @@ def process_data():
         'artistGenre':artistGenre,
         'artistArt':artistArt,
         'albumsDict':albumsDict,
-        'message': f'You sent: {artist_name}'}), 200
+        'message': f'You sent: {getArtistName}'}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)

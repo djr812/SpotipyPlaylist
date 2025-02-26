@@ -33,7 +33,7 @@
 /* Style for the container that holds all the albums */
 .albums-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* 3 equal columns */
+    grid-template-columns: repeat(4, 1fr);  /* 3 equal columns */
     gap: 20px;  /* Optional: space between items */
     padding: 20px;  /* Optional: space around the container */
 }
@@ -64,11 +64,28 @@
 
 /* Remove the dots from the unordered list */
 .album ul {
-    list-style-type: none;  /* Removes bullet points from the list */
-    padding-left: 0;  /* Remove any default padding */
+    list-style-type: none; /* Remove default bullets */
+    padding: 0;
 }
 
-.album li {
-    font-size: 14px;  /* Optional: adjust font size for the list items */
-    margin-bottom: 5px;  /* Optional: add spacing between tracks */
+.album ul li {
+    display: flex; /* Use Flexbox to align items */
+    justify-content: space-between; /* Push the track name to the left and button to the right */
+    align-items: center; /* Align items vertically */
+    margin-bottom: 10px; /* Add some space between tracks */
+}
+
+/* Styling the 'Add' button */
+.add-button {
+    margin-left: 10px; /* Add some space between the track name and the button */
+    padding: 5px 10px;
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.add-button:hover {
+    background-color: #45a049; /* Darker green when hovered */
 }

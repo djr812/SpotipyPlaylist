@@ -26,6 +26,11 @@ function sendArtist() {
         .then((response) => response.json())
         .then((data) => {
             console.log('Success. Found data for ', data.artistName);
+
+            // Clear existing content before adding new data
+            document.getElementById('artistDetails').innerHTML = '';
+            document.getElementById('artistAlbums').innerHTML = '';
+
             document.getElementById('artistDetails').innerHTML = `
             <div class="artist-section">
                 <div class="artist-image">
@@ -38,6 +43,7 @@ function sendArtist() {
                 </div>
             </div>
         `;
+          
             const displayElement = document.getElementById('artistAlbums');
 
             // Create a container div to hold all albums
@@ -89,6 +95,24 @@ function sendArtist() {
                                 const trackListItem =
                                     document.createElement('li');
                                 trackListItem.textContent = `${trackNumber}. ${track.trackName}`; // Numbered track name
+                                
+                                // Create the "Add" button for each track
+                                const addButton = document.createElement('button');
+                                addButton.textContent = 'Add'; // Button text
+                                addButton.classList.add('add-button'); // Add a class for styling if necessary
+                                
+                                // Store the track ID in the button's data attribute
+                                addButton.setAttribute('data-track-id', track.trackID);
+                                
+                                // Add event listener for when the button is clicked
+                                addButton.addEventListener('click', function() {
+                                    // When clicked, send the track ID to Flask
+                                    const trackID = addButton.getAttribute('data-track-id');
+                                    console.log('Track ID to add:', trackID);
+                                });
+
+                                // Append the "Add" button after the track name
+                                trackListItem.appendChild(addButton);
 
                                 // Append the track list item to the list
                                 trackList.appendChild(trackListItem);
