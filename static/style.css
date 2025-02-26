@@ -94,3 +94,22 @@
 .plAddButton:hover {
     background-color: #45a049; /* Darker green when hovered */
 }
+
+.track-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;  /* Vertically center the items */
+}
+
+.delete-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}

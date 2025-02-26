@@ -175,17 +175,37 @@ function buildPlaylist(data) {
             // Get the array of tracks for this id
             const tracks = data[id];
             
+            const trackContainer = document.createElement('div');
+            trackContainer.classList.add('track-container'); // Add a class for styling the flex container
+
             const trackNameElement = document.createElement('p');
-            trackNameElement.textContent = tracks[1];
+            trackNameElement.textContent = tracks[1]; // Assuming tracks[1] holds the track name
 
-                // Append the track name to the track div
-            trackDiv.appendChild(trackNameElement);
+            // Create a delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('delete-btn'); // Optional: Add a class for styling
+
+            // Add an event listener to the delete button
+            deleteButton.addEventListener('click', () => {
+                // You can perform actions to delete the track here
+                trackDiv.remove();
+            });
+
+            // Append the track name and delete button to the track container
+            trackContainer.appendChild(trackNameElement);
+            trackContainer.appendChild(deleteButton);
+
+            // Append the track container to the track div
+            trackDiv.appendChild(trackContainer);
             
-
             // Append the track div to the playlist section
             playlistSection.appendChild(trackDiv);
         }
     }
 }
+
+
+
 
 
