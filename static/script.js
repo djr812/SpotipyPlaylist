@@ -1,3 +1,5 @@
+let playlistDict = {}
+
 setInterval(function () {
     fetch('/getNewSongPlaying') // Call your Flask route /getNewSongPlaying to get fresh song info
         .then((response) => response.json())
@@ -28,24 +30,15 @@ function sendArtist() {
             console.log('Success. Found data for ', data.artistName);
 
             // Clear existing content before adding new data
-            document.getElementById('artistDetails').innerHTML = '';
             document.getElementById('artistAlbums').innerHTML = '';
-
-            document.getElementById('artistDetails').innerHTML = `
-            <div class="artist-section">
-                <div class="artist-image">
-                    <img src="${data.artistArt}" alt="Image of ${data.artistName}" style="width: 300px; height: 300px;">
-                </div>
-                <div class="artist-info">
-                    <p><strong>Artist Name:</strong> ${data.artistName}</p>
-                    <p><strong>Followers:</strong> ${data.artistFollowers}</p>
-                    <p><strong>Genre:</strong> ${data.artistGenre}</p>
-                </div>
-                <div id="playlist">
-                </div>
-            </div>
-        `;
-          
+            // Fill in the artistSection with new data
+            document.querySelector('.artistCol1Heading').textContent = data.artistName
+            document.querySelector('.artistImage').innerHTML = `<img src="${data.artistArt}" alt="Image of ${data.artistName}" style="width: 300px; height: 300px;">`
+            document.querySelector('.artistInfo').innerHTML = `
+                <p><strong>Followers:</strong> ${data.artistFollowers}</p>
+                <p><strong>Genre:</strong> ${data.artistGenre}</p>
+            `
+                     
             const displayElement = document.getElementById('artistAlbums');
 
             // Create a container div to hold all albums
@@ -94,8 +87,7 @@ function sendArtist() {
                                 const track = albumData.tracks[trackKey]; // Access the track data
 
                                 // Create a list item for each track
-                                const trackListItem =
-                                    document.createElement('li');
+                                const trackListItem = document.createElement('li');
                                 trackListItem.textContent = `${trackNumber}. ${track.trackName}`; // Numbered track name
                                 
                                 // Create the "Add" button for each track
@@ -113,7 +105,7 @@ function sendArtist() {
                                     console.log('Track ID to add:', trackID);
                                     
                                     // Send trackID to Flask via a POST request using Fetch API
-                                    fetch('/addTrack', {
+                                    fetch('/getTrackData', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
@@ -122,9 +114,18 @@ function sendArtist() {
                                     })
                                         .then((response) => response.json())
                                         .then((data) => {
-                                            console.log('Track added:', data);
-                                            // Optionally update the UI based on the response, e.g., display success message
-                                            buildPlaylist(data.playlistDict);
+                                            console.log('Track info received:', data);
+                                            
+                                            // Use 'data' to start building playlistDict object
+                                            let playlistIndex;
+                                            if (Object.keys(playlistDict).length === 0) {
+                                                playlistIndex = 1;
+                                            } else {
+                                                playlistIndex = Object.keys(playlistDict).length + 1;
+                                            }
+                                            playlistDict[playlistIndex] = data.playlistItem;
+                                            console.log(playlistDict); 
+                                            buildPlaylist(playlistDict);
                                         })
                                         .catch((error) => {
                                             console.error('Error adding track:', error);
@@ -152,6 +153,7 @@ function sendArtist() {
 
             // Append the albums container to the main display element
             displayElement.appendChild(albumsContainer);
+        
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -176,10 +178,11 @@ function buildPlaylist(data) {
             const tracks = data[id];
             
             const trackContainer = document.createElement('div');
-            trackContainer.classList.add('track-container'); // Add a class for styling the flex container
+            trackContainer.classList.add('plTrack'); // Add a class for styling the flex container
 
             const trackNameElement = document.createElement('p');
-            trackNameElement.textContent = tracks[1]; // Assuming tracks[1] holds the track name
+            trackNameElement.classList.add('plTrackName');
+            trackNameElement.textContent = tracks[1]; // 2nd array element holds track name
 
             // Create a delete button
             const deleteButton = document.createElement('button');
@@ -190,6 +193,8 @@ function buildPlaylist(data) {
             deleteButton.addEventListener('click', () => {
                 // You can perform actions to delete the track here
                 trackDiv.remove();
+                deleteFromPlaylist(tracks[1])
+                console.log(playlistDict);
             });
 
             // Append the track name and delete button to the track container
@@ -205,7 +210,28 @@ function buildPlaylist(data) {
     }
 }
 
-
+function deleteFromPlaylist(trackToDelete) {
+    // Iterate through the dictionary and search for the target trackName
+    for (const key in playlistDict) {
+        if (playlistDict.hasOwnProperty(key)) {
+            // Check if the trackName matches the target name
+            const track = playlistDict[key];
+            
+            if (track[1] === trackToDelete) {
+                // If the trackName matches, delete this array using splice
+                // Since splice modifies the array in place, we remove the element at the current index
+                playlistDict[key].splice(0, 2);  // Removes the trackID and trackName from the array
+    
+                // Optionally, delete the key from the dictionary if you don't want the key-value pair
+                delete playlistDict[key];
+    
+                break;  // Exit the loop after deleting the track
+            }
+        }
+    }
+    console.log(playlistDict)
+    buildPlaylist(playlistDict)
+}
 
 
 

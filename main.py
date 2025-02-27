@@ -35,8 +35,12 @@ deviceID = devices['devices'][0]['id']
 
 # Get current track information
 track = sp.current_user_playing_track()
-playingArtist = track['item']['artists'][0]['name']
-playingTrack = track['item']['name']
+if track != None:
+    playingArtist = track['item']['artists'][0]['name']
+    playingTrack = track['item']['name']
+else:
+    playingArtist = ""
+    playingTrack = ""
 
 displayName = user['display_name']
 followers = user['followers']['total']
@@ -63,12 +67,16 @@ def getNewSongPlaying():
     # Get current track information
     songPlaying = {}
     track = sp.current_user_playing_track()
-
-    if track['item'] != []:
-        playingArtist = track['item']['artists'][0]['name']
+    if track != None:
+        playingArtist = track['item']['artists'][0]['name']   
     else:
         playingArtist = ""
-    playingTrack = track['item']['name']
+
+    if track != None:
+        playingTrack = track['item']['name']
+    else:
+        playingTrack = ""
+    
 
     songPlaying = {'playingArtist': playingArtist, 'playingTrack': playingTrack}
     return jsonify(songPlaying)
@@ -139,8 +147,9 @@ def searchArtist():
         'message': f'You sent: {getArtistName}'}), 200
 
 
-@app.route('/addTrack', methods=['POST'])
+@app.route('/getTrackData', methods=['POST'])
 def add_track():
+    playlistItem = []
     # Get the JSON data from the incoming request
     data = request.get_json()
     
@@ -149,16 +158,19 @@ def add_track():
     playlistTrackID = playlistTrackID[14:]
     
     if playlistTrackID:
-        plistIndex = len(playlistDict)+1
+        #plistIndex = len(playlistDict)+1
         
         # Get the track name
         playlistTrackName = getTrackName(playlistTrackID)
 
         # Add the trackID and trackName to the dictionary (using plistIndex as the key)
-        playlistDict[plistIndex] = [playlistTrackID, playlistTrackName]  
+        #playlistDict[plistIndex] = [playlistTrackID, playlistTrackName] 
+
+        # Add trackID and trackName to an array to return 
+        playlistItem = [playlistTrackID, playlistTrackName]
 
         # Respond with a success message
-        return jsonify({"message": "Track added successfully", "playlistDict": playlistDict}), 200
+        return jsonify({"message": "Track info received", "playlistItem": playlistItem}), 200
     else:
         # Handle the case where trackID is not provided
         return jsonify({"message": "Track ID not provided"}), 400

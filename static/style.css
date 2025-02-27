@@ -1,22 +1,80 @@
-/* Style for the container that holds the artist information */
-.artist-section {
+/* Style for the container that holds the artist information 
+.artistSection {
     display: grid;
     grid-template-columns: 10fr 5fr 15fr; /* 1st column for pic, 2nd column for artist info, 3rd for playlist */
-    gap: 20px;  /* Space between the columns */
-    margin-bottom: 20px;  /* Optional: space below the artist section */
+ /*   gap: 20px;   Space between the columns */
+  /*  margin-bottom: 20px;   Optional: space below the artist section */
+
+ .artistSection {
+    display: grid;
+    grid-template-columns: 5fr 5fr 10fr;
+    flex-direction: column;  /* Stack sections vertically */
+    gap: 20px; /* Space between sections */
+}
+
+.artistHeading {
+    text-align: center; /* Center the artist name */
+    width: 100%;
+}
+
+.mergedHeading {  
+    font-size: 1.8em; /* Adjust the size of the artist name */
+    margin-bottom: 10px;
+}
+
+.artistColumns {
+    display: grid;
+    grid-template-columns: 5fr 5fr 10fr; /* Create three equal-width columns */
+    gap: 20px; /* Space between the image and artist info */
+    justify-items: center; /* Center content within columns */
+}
+
+.artistImage {
+    display: flex;
+    flex-direction: column;
+    text-align: center; /* Center image inside the column */
+    width: 100%;
+}
+
+.artistInfo {
+    display: flex;
+    flex-direction: column;
+    text-align: left; /* Align the text left in the info column */
+    width: 100%;
+}
+
+#playlist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center; /* Center the playlist heading */
+    width: 100%;
+}
+
+.artistCol1Heading .artistCol2Heading .artistCol3Heading {
+    font-size: 1.5em;
+    margin-top: 0; /* Ensure the heading is at the top of the playlist section */
+    margin-bottom: 10px; /* Add some space below the heading */
+}
+
+.artistDetails {
+    display: flex;
+    gap: 20px; /* Add some space between image and info */
 }
 
 /* Style for the artist information section */
-.artist-info {
+.artistInfo {
     display: flex;
+    flex: 2;
     flex-direction: column; /* Arrange text info in a column */
     justify-content: flex-start; /* Align text at the top */
     text-align: left; /* Align text to the left of the section */
 }
 
 /* Style for the artist image */
-.artist-image {
+.artistImage {
     display: flex;
+    flex: 1;
     justify-content: center; /* Center the image horizontally */
     align-items: center; /* Center the image vertically */
     padding: 10px; /* Add padding around the image */
@@ -24,7 +82,7 @@
     height: auto; /* Let the height adjust to the image's aspect ratio */
 }
 
-.artist-image img {
+.artistImage img {
     width: 300px; /* Set the image width to 300px */
     height: 300px; /* Set the image height to 300px */
     object-fit: cover; /* Ensure the image covers the space without distortion */
@@ -95,10 +153,20 @@
     background-color: #45a049; /* Darker green when hovered */
 }
 
-.track-container {
+.plTrackName {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.plTrack {
     display: flex;
     justify-content: space-between;
     align-items: center;  /* Vertically center the items */
+}
+
+.plTracks {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .delete-btn {
