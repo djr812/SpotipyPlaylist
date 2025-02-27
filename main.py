@@ -38,9 +38,13 @@ track = sp.current_user_playing_track()
 if track != None:
     playingArtist = track['item']['artists'][0]['name']
     playingTrack = track['item']['name']
+    deviceName = devices['devices'][0]['name']
+    deviceType = devices['devices'][0]['type']
 else:
-    playingArtist = ""
-    playingTrack = ""
+    playingArtist = "nobody"
+    playingTrack = "nothing"
+    deviceName = "nada"
+    deviceType = "unknown device"
 
 displayName = user['display_name']
 followers = user['followers']['total']
@@ -58,7 +62,7 @@ def index():
     Returns     render_template
     """
     return render_template(
-        "index.html", displayName=displayName, followers=followers, playingArtist=playingArtist, playingTrack=playingTrack, 
+        "index.html", displayName=displayName, followers=followers, playingArtist=playingArtist, playingTrack=playingTrack, deviceName=deviceName, deviceType=deviceType, 
     )
 
 
@@ -67,18 +71,19 @@ def getNewSongPlaying():
     # Get current track information
     songPlaying = {}
     track = sp.current_user_playing_track()
+    devices = sp.devices()
     if track != None:
-        playingArtist = track['item']['artists'][0]['name']   
-    else:
-        playingArtist = ""
-
-    if track != None:
+        playingArtist = track['item']['artists'][0]['name']
         playingTrack = track['item']['name']
+        deviceName = devices['devices'][0]['name']
+        deviceType = devices['devices'][0]['type']   
     else:
-        playingTrack = ""
-    
-
-    songPlaying = {'playingArtist': playingArtist, 'playingTrack': playingTrack}
+        playingArtist = "nobody"
+        playingTrack = "nothin'"
+        deviceName = "nada"
+        deviceType = "unknown device"
+     
+    songPlaying = {'playingArtist': playingArtist, 'playingTrack': playingTrack, 'deviceName': deviceName, 'deviceType': deviceType}
     return jsonify(songPlaying)
 
 
@@ -97,9 +102,9 @@ def searchArtist():
     artistName = artist['name']
     artistFollowers = artist['followers']['total']
     if artist['genres'] != []:
-        artistGenres = artist['genres'][0]
+        artistGenres = artist['genres']
     else:
-        artistGenres = ""
+        artistGenres = []
     artistID = artist['id']
     if artist['images'] != []:
         artistArt = artist['images'][0]['url']

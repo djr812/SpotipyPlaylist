@@ -10,7 +10,11 @@ setInterval(function () {
                 data.playingTrack +
                 '</b> by <b>' +
                 data.playingArtist +
-                '</b';
+                '</b> on a <b>' +
+                data.deviceType +
+                '</b> called <b>' +
+                data.deviceName +
+                '</b>';
         });
 }, 5000); // Every 5000 milliseconds (5 seconds)
 
@@ -35,9 +39,12 @@ function sendArtist() {
             document.querySelector('.artistCol1Heading').textContent = data.artistName
             document.querySelector('.artistImage').innerHTML = `<img src="${data.artistArt}" alt="Image of ${data.artistName}" style="width: 300px; height: 300px;">`
             document.querySelector('.artistInfo').innerHTML = `
-                <p><strong>Followers:</strong> ${data.artistFollowers}</p>
-                <p><strong>Genre:</strong> ${data.artistGenre}</p>
-            `
+                <p><strong>Followers:</strong> ${data.artistFollowers.toLocaleString()}</p>
+                <p><strong>Genres:</strong></p>
+                <ul>
+                    ${data.artistGenres.map(genre => `<li>${genre}</li>`).join('')}
+                </ul>
+            `;
                      
             const displayElement = document.getElementById('artistAlbums');
 
@@ -172,13 +179,13 @@ function buildPlaylist(data) {
         if (data.hasOwnProperty(id)) {
             // Create a new div to hold the track names for this id
             const trackDiv = document.createElement('div');
-            trackDiv.classList.add('plTracks'); // Optional: Add a class for styling
+            trackDiv.classList.add('plTracks'); 
 
             // Get the array of tracks for this id
             const tracks = data[id];
             
             const trackContainer = document.createElement('div');
-            trackContainer.classList.add('plTrack'); // Add a class for styling the flex container
+            trackContainer.classList.add('plTrack'); 
 
             const trackNameElement = document.createElement('p');
             trackNameElement.classList.add('plTrackName');
@@ -187,7 +194,7 @@ function buildPlaylist(data) {
             // Create a delete button
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
-            deleteButton.classList.add('delete-btn'); // Optional: Add a class for styling
+            deleteButton.classList.add('deleteBtn'); 
 
             // Add an event listener to the delete button
             deleteButton.addEventListener('click', () => {

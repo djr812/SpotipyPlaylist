@@ -14,7 +14,7 @@
     <section>
         <div class="ticker">
             <marquee behavior="scroll" direction="left">
-                <span id="currentlyPlaying">You are currently playing <b>{{ playingTrack }}</b> by <b>{{ playingArtist }}</b></span>
+                <span id="currentlyPlaying">You are currently playing <b>{{ playingTrack }}</b> by <b>{{ playingArtist }}</b> on a <b>{{ deviceType }}</b> called <b>{{ deviceName }}</b></span>
             </marquee>
         </div>
         <div class="userDetails">
@@ -25,7 +25,7 @@
         <div class="artistSearch">
             <h3>Search for an Artist</h3>
             <input type="text" id="artistName" name="artistName" placeholder="Enter Artist's Name here">
-            <button type="button" onclick="sendArtist()">GO</button>
+            <button type="button" id="sendArtist" onclick="sendArtist()">GO</button>
         </div>
     </section>
     <section>
@@ -39,7 +39,7 @@
                 </div>
                 <div class="artistHeading">
                     <h3 class="artistCol3Heading">Playlist Builder</h3>
-                    <input type="text" id="playlistName" name="playlistName" placeholder="Enter Playlist Name here">
+                    <input type="text" id="playlistName" name="playlistName" placeholder="Enter Your New Playlist Name Here:">
                     <button type="button" onclick="createPL()" class="createPlaylistBtn">Create Playlist</button>
                     <button typw="button" onclick="clearPL()" class="clearPlaylistBtn">Clear</button>
                 </div>
