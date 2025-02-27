@@ -148,7 +148,7 @@ def searchArtist():
 
 
 @app.route('/getTrackData', methods=['POST'])
-def add_track():
+def getTrackData():
     playlistItem = []
     # Get the JSON data from the incoming request
     data = request.get_json()
@@ -161,13 +161,10 @@ def add_track():
         #plistIndex = len(playlistDict)+1
         
         # Get the track name
-        playlistTrackName = getTrackName(playlistTrackID)
-
-        # Add the trackID and trackName to the dictionary (using plistIndex as the key)
-        #playlistDict[plistIndex] = [playlistTrackID, playlistTrackName] 
+        playlistTrackName, playlistArtist = getTrackName(playlistTrackID)
 
         # Add trackID and trackName to an array to return 
-        playlistItem = [playlistTrackID, playlistTrackName]
+        playlistItem = [playlistTrackID, playlistTrackName, playlistArtist]
 
         # Respond with a success message
         return jsonify({"message": "Track info received", "playlistItem": playlistItem}), 200
@@ -179,7 +176,9 @@ def add_track():
 def getTrackName(plTrackID):
     trackSearch = sp.track(plTrackID, 'AU')
     plTrackName = trackSearch["name"]
-    return plTrackName
+    trackSearch = trackSearch["artists"]
+    plTrackArtist = trackSearch[0]["name"]
+    return plTrackName, plTrackArtist
 
 
 if __name__ == "__main__":

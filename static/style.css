@@ -13,12 +13,14 @@
 }
 
 .artistHeading {
-    text-align: center; /* Center the artist name */
-    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .mergedHeading {  
-    font-size: 1.8em; /* Adjust the size of the artist name */
+    font-size: 1.8em; 
     margin-bottom: 10px;
 }
 
@@ -46,15 +48,49 @@
 #playlist {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0px;
     text-align: center; /* Center the playlist heading */
     width: 100%;
+}
+
+.clearPlaylistBtn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;        
+}
+
+.clearPlaylistBtn:hover {
+    background-color: darkred;
+}
+
+.createPlaylistBtn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: rgb(19, 126, 60);
+    color: white;
+    border: none;
+    cursor: pointer;   
+}
+
+.createPlaylistBtn:hover {
+    background-color: darkgreen;
 }
 
 .artistCol1Heading .artistCol2Heading .artistCol3Heading {
     font-size: 1.5em;
     margin-top: 0; /* Ensure the heading is at the top of the playlist section */
     margin-bottom: 10px; /* Add some space below the heading */
+}
+
+.artistCol3Heading .clearPlaylistBtn .createPlaylistBtn {
+    display: flex; /* Use Flexbox to align items */
+    flex-grow: 1;
+    justify-content: space-between; 
+    align-items: center; /* Align items vertically */
+    margin-bottom: 10px; 
 }
 
 .artistDetails {
@@ -165,8 +201,8 @@
 }
 
 .plTracks {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
 
 .delete-btn {

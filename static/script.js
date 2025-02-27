@@ -182,7 +182,7 @@ function buildPlaylist(data) {
 
             const trackNameElement = document.createElement('p');
             trackNameElement.classList.add('plTrackName');
-            trackNameElement.textContent = tracks[1]; // 2nd array element holds track name
+            trackNameElement.textContent = tracks[1] + ' by ' + tracks[2]; 
 
             // Create a delete button
             const deleteButton = document.createElement('button');
