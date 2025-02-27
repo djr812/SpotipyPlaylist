@@ -16,7 +16,7 @@ application = app
 # Spotify credentials
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
-scope = 'user-library-read,user-read-playback-state,user-modify-playback-state'
+scope = 'user-library-read,user-read-playback-state,user-modify-playback-state,playlist-modify-public'
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id,
                                                client_secret=client_secret,
@@ -48,6 +48,8 @@ else:
 
 displayName = user['display_name']
 followers = user['followers']['total']
+
+# Functionality to create and add items to playlist
 
 # Initialize an empty dictionary to hold playlist track IDs
 playlistDict = {}
@@ -162,7 +164,7 @@ def getTrackData():
     
     # Extract the trackID from the data
     playlistTrackID = data.get('trackID')
-    playlistTrackID = playlistTrackID[14:]
+    #playlistTrackID = playlistTrackID[14:]
     
     if playlistTrackID:
         #plistIndex = len(playlistDict)+1
@@ -178,6 +180,38 @@ def getTrackData():
     else:
         # Handle the case where trackID is not provided
         return jsonify({"message": "Track ID not provided"}), 400
+
+
+@app.route('/createPlaylist', methods=['POST'])
+def createPlaylist():
+    # Get the JSON data from the incoming request
+    data = request.get_json()
+    playlist = data.get('playlist')
+
+    playlistName = playlist.get('name')
+    playlistDesc = playlist.get('desc')
+    uris = playlist.get('uris')
+    userID = user["id"]
+
+    if (playlistName and playlistDesc and userID):
+        playlistID = createPlaylistContainer(playlistName, playlistDesc, userID)
+        fillPlaylistContainer(playlistID, uris, userID)
+        return jsonify({"message": "Playlist info received for playlist ", "playlistName": playlistName}), 200
+    else:
+        return jsonify({"message": "Playlist data not provided"}), 400
+
+
+def createPlaylistContainer(playlistName, playlistDesc, userID):
+    # Request playlist container be created
+    playlistDetails = sp.user_playlist_create(userID, playlistName, public=True, description=playlistDesc)
+    playlistID = playlistDetails['id']
+    return playlistID
+
+
+def fillPlaylistContainer(playlistID, uris, userID):
+    # Add tracks to the playlist
+    sp.user_playlist_add_tracks(userID, playlistID, uris)
+    return
 
 
 def getTrackName(plTrackID):

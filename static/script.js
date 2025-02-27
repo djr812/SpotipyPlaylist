@@ -19,7 +19,7 @@ setInterval(function () {
 }, 5000); // Every 5000 milliseconds (5 seconds)
 
 function sendArtist() {
-    var inputValue = document.getElementById('artistName').value;
+    let inputValue = document.getElementById('artistName').value;
 
     // Send inputValue to Flask via a POST request using Fetch API
     fetch('/searchArtist', {
@@ -245,7 +245,51 @@ function deleteFromPlaylist(trackToDelete) {
     buildPlaylist(playlistDict);
 };
 
-function deleteAllPlaylist() {
-
+function createPlaylist() {
+    let playlist = {};
+    let uris = [];
+    
+    if (playlistDict == {}) {
+        alert('You have no items in your playlist');
+        return;
+    }
+    
+    let playlistName = document.getElementById('playlistName').value;
+    if (playlistName === '') {
+        alert('You must enter a name for your Playlist');
+        return;
+    }
+    
+    let playlistDesc = window.prompt('Enter a Description for your playlist called ' + playlistName);
+    if (playlistDesc === '') {
+        playlistDesc = 'A Playlist';
+    }
+    
+    playlist.name = playlistName;
+    playlist.desc = playlistDesc;
+    for (const key in playlistDict) {
+        const track = playlistDict[key];
+        uris.push(track[0]);
+    } 
+    playlist.uris = uris;
+    console.log(playlist);
+    
+    // Send playlist to Flask via a POST request using Fetch API
+    fetch('/createPlaylist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playlist: playlist }),  // Send playlist object as JSON
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Playlist info received:', data);
+            alert('Playlist successfully created!');
+            clearPL();
+        })
+        .catch((error) => {
+            console.error('Error adding playlist:', error);
+    });
 };
 
