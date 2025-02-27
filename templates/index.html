@@ -8,16 +8,25 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
-    <h1>Spotify Playlist Creator</h1>
+    <header>
+        <h1>Spotify Playlist Creator</h1>
+    </header>
     <section>
-        <h2>Creating Playlists for {{ displayName }} </h2>
-        {{ displayName }} has {{ followers }} followers.
-        <p id="currentlyPlaying">You are currently playing <b>{{ playingTrack }}</b> by <b>{{ playingArtist }}</b></p>
+        <div class="ticker">
+            <marquee behavior="scroll" direction="left">
+                <span id="currentlyPlaying">You are currently playing <b>{{ playingTrack }}</b> by <b>{{ playingArtist }}</b></span>
+            </marquee>
+        </div>
+        <div class="userDetails">
+            <h2>Creating Playlists for {{ displayName }} who has {{ followers }} followers.</h2>
+        </div>
     </section>
     <section>
-        <h3>Search for an Artist</h3>
-        <input type="text" id="artistName" name="artistName" placeholder="Enter Artist's Name here">
-        <button type="button" onclick="sendArtist()">GO</button>
+        <div class="artistSearch">
+            <h3>Search for an Artist</h3>
+            <input type="text" id="artistName" name="artistName" placeholder="Enter Artist's Name here">
+            <button type="button" onclick="sendArtist()">GO</button>
+        </div>
     </section>
     <section>
         <div id="artist"> 
@@ -30,8 +39,9 @@
                 </div>
                 <div class="artistHeading">
                     <h3 class="artistCol3Heading">Playlist Builder</h3>
-                    <button typw="button" onclick="clearPL()" class="clearPlaylistBtn">Clear</button>
+                    <input type="text" id="playlistName" name="playlistName" placeholder="Enter Playlist Name here">
                     <button type="button" onclick="createPL()" class="createPlaylistBtn">Create Playlist</button>
+                    <button typw="button" onclick="clearPL()" class="clearPlaylistBtn">Clear</button>
                 </div>
             </div>
             <div class="artistColumns">

@@ -210,6 +210,11 @@ function buildPlaylist(data) {
     }
 }
 
+function clearPL() {
+    playlistDict = {};
+    buildPlaylist(playlistDict);
+};
+
 function deleteFromPlaylist(trackToDelete) {
     // Iterate through the dictionary and search for the target trackName
     for (const key in playlistDict) {
@@ -229,9 +234,11 @@ function deleteFromPlaylist(trackToDelete) {
             }
         }
     }
-    console.log(playlistDict)
-    buildPlaylist(playlistDict)
-}
+    console.log(playlistDict);
+    buildPlaylist(playlistDict);
+};
 
+function deleteAllPlaylist() {
 
+};
 

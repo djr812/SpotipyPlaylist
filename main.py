@@ -91,13 +91,15 @@ def searchArtist():
     searchResults = sp.search(getArtistName,1,0,"artist")
 
     # Extract data from searchResults
+    artistGenres = []
+
     artist = searchResults['artists']['items'][0]
     artistName = artist['name']
     artistFollowers = artist['followers']['total']
     if artist['genres'] != []:
-        artistGenre = artist['genres'][0]
+        artistGenres = artist['genres'][0]
     else:
-        artistGenre = ""
+        artistGenres = ""
     artistID = artist['id']
     if artist['images'] != []:
         artistArt = artist['images'][0]['url']
@@ -141,7 +143,7 @@ def searchArtist():
     return jsonify({
         'artistName':artistName,
         'artistFollowers':artistFollowers,
-        'artistGenre':artistGenre,
+        'artistGenres':artistGenres,
         'artistArt':artistArt,
         'albumsDict':albumsDict,
         'message': f'You sent: {getArtistName}'}), 200
