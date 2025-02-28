@@ -21,6 +21,9 @@ setInterval(function () {
 function sendArtist() {
     let inputValue = document.getElementById('artistName').value;
 
+    const hiddenDiv = document.getElementById("artist");
+    document.getElementById("searchingOverlay").style.display = "flex";
+
     // Send inputValue to Flask via a POST request using Fetch API
     fetch('/searchArtist', {
         method: 'POST',
@@ -222,9 +225,11 @@ function sendArtist() {
 
             // Append the albums container to the main display element
             displayElement.appendChild(albumsContainer);
-        
+            document.getElementById("searchingOverlay").style.display = "none";
+            hiddenDiv.style.display = "block";
         })
         .catch((error) => {
+            document.getElementById("searchingOverlay").style.display = "none";
             console.error('Error:', error);
         });
 }
