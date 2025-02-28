@@ -105,6 +105,12 @@ function sendArtist() {
                                 // Store the track ID in the button's data attribute
                                 addButton.setAttribute('plTrackID', track.trackID);
                                 
+                                // Create 'Play' button for each track
+                                const playButton = document.createElement('button');
+                                playButton.textContent = 'Play';
+                                playButton.classList.add('trackPlayBtn');
+                                playButton.setAttribute('trackPlayID', track.trackID);       
+
                                 // Add event listener for when the button is clicked
                                 addButton.addEventListener('click', function() {
                                     // When clicked, send the track ID to Flask
@@ -139,7 +145,32 @@ function sendArtist() {
                                     });
                                 });
 
-                                // Append the "Add" button after the track name
+                                // Add event listener for when the button is clicked
+                                playButton.addEventListener('click', function() {
+                                    // When clicked, send the track ID to Flask
+                                    const trackID = playButton.getAttribute('trackPlayID');
+                                    console.log('Track ID to play:', trackID);
+                                    
+                                    // Send trackID to Flask via a POST request using Fetch API
+                                    fetch('/playTrack', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
+                                    })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            console.log('Track play info received:', data);
+                                            
+                                        })
+                                        .catch((error) => {
+                                            console.error('Error adding track:', error);
+                                    });
+                                });
+
+                                // Append the "Add" and "Play" buttons after the track name
+                                trackListItem.appendChild(playButton);
                                 trackListItem.appendChild(addButton);
 
                                 // Append the track list item to the list

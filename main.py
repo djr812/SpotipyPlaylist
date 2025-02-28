@@ -201,6 +201,28 @@ def createPlaylist():
         return jsonify({"message": "Playlist data not provided"}), 400
 
 
+@app.route('/playTrack', methods=['POST'])
+def playTrack():
+    data = request.get_json()
+    trackID = data.get('trackID')
+    # Get currently playing device
+    devices = sp.devices()
+    #print(devices['devices'])
+    if not devices['devices'][0]['is_active']:
+        deviceID = ['devices'][0]['id']
+        sp.transfer_playback(deviceID, force_play=True) 
+        sp.start_playback(uris=[trackID])
+    else:
+        sp.start_playback(uris=[trackID])
+    
+    devices = sp.devices()
+
+    if (data and devices['devices'][0]['is_active']):
+        return jsonify({"message": "Playing track ", "trackID": trackID}), 200
+    else:
+        return jsonify({"message": "Unable to play Track"}), 400
+
+
 def createPlaylistContainer(playlistName, playlistDesc, userID):
     # Request playlist container be created
     playlistDetails = sp.user_playlist_create(userID, playlistName, public=True, description=playlistDesc)
