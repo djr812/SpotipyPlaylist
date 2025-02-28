@@ -207,9 +207,9 @@ def playTrack():
     trackID = data.get('trackID')
     # Get currently playing device
     devices = sp.devices()
-    #print(devices['devices'])
+    print(devices['devices'][0]['id'])
     if not devices['devices'][0]['is_active']:
-        deviceID = ['devices'][0]['id']
+        deviceID = devices['devices'][0]['id']
         sp.transfer_playback(deviceID, force_play=True) 
         sp.start_playback(uris=[trackID])
     else:
@@ -221,6 +221,30 @@ def playTrack():
         return jsonify({"message": "Playing track ", "trackID": trackID}), 200
     else:
         return jsonify({"message": "Unable to play Track"}), 400
+
+
+@app.route('/queueTrack', methods=['POST'])
+def queueTrack():
+    data = request.get_json()
+    trackID = data.get('trackID')
+    print(trackID)
+    # Get currently playing device
+    devices = sp.devices()
+    #print(devices)
+    if not devices['devices'][0]['is_active']:
+        #return jsonify({"message": "Unable to queue Track"}), 400
+        deviceID = devices['devices'][0]['id']
+        sp.transfer_playback(deviceID, force_play=True) 
+        sp.start_playback(uris=[trackID])
+    else:
+        sp.add_to_queue(trackID)
+        return jsonify({"message": "Queueing track ", "trackID": trackID}), 200
+    
+    # devices = sp.devices()
+    # if (data and devices['devices'][0]['is_active']):
+    #     return jsonify({"message": "Queueing track ", "trackID": trackID}), 200
+    # else:
+    #     return jsonify({"message": "Unable to queue Track"}), 400
 
 
 def createPlaylistContainer(playlistName, playlistDesc, userID):

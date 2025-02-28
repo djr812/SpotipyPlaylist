@@ -1,6 +1,6 @@
 header {
     background-color: black;
-    color: green;
+    color: #1DB954;
     padding: 5px 0;
     text-align: center;
 }
@@ -8,7 +8,7 @@ header {
 body {
     font-family: 'Tahoma', sans-serif;
     background-color: black;
-    color: green;
+    color: #1DB954;
     margin: 0;
     padding: 0;
 }
@@ -32,7 +32,7 @@ body {
 #sendArtist {
     margin-left: 10px;
     padding: 5px 10px;
-    background-color: rgb(19, 126, 60);
+    background-color: #1DB954;
     color: white;
     border: none;
     margin-bottom: 1px;
@@ -159,7 +159,7 @@ body {
 .createPlaylistBtn {
     margin-left: 10px;
     padding: 5px 10px;
-    background-color: rgb(19, 126, 60);
+    background-color: #1DB954;
     color: white;
     border: none;
     cursor: pointer; 
@@ -266,7 +266,7 @@ body {
 .plAddButton {
     margin-left: 10px; /* Add some space between the track name and the button */
     padding: 5px 10px;
-    background-color: #4CAF50; /* Green background */
+    background-color: #1DB954; /* Green background */
     color: white; /* White text */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */
@@ -276,14 +276,24 @@ body {
 .trackPlayBtn {
     margin-left: 10px; /* Add some space between the track name and the button */
     padding: 5px 10px;
-    background-color: #4CAF50; /* Green background */
+    background-color: #1DB954; /* Green background */
     color: white; /* White text */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
 }
 
-.plAddButton:hover .trackPlayBtn:hover {
+.trackQueueBtn {
+    margin-left: 10px; /* Add some space between the track name and the button */
+    padding: 5px 10px;
+    background-color: #1DB954; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.plAddButton:hover {
     background-color: #45a049; /* Darker green when hovered */
 }
 
@@ -291,6 +301,9 @@ body {
     background-color: #45a049; /* Darker green when hovered */
 }
 
+.trackQueueBtn:hover {
+    background-color: #45a049; /* Darker green when hovered */
+}
 
 .plTrackName {
     margin-top: 0;

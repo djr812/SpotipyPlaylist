@@ -109,7 +109,13 @@ function sendArtist() {
                                 const playButton = document.createElement('button');
                                 playButton.textContent = 'Play';
                                 playButton.classList.add('trackPlayBtn');
-                                playButton.setAttribute('trackPlayID', track.trackID);       
+                                playButton.setAttribute('trackPlayID', track.trackID);  
+                                
+                                 // Create 'Queue' button for each track
+                                 const queueButton = document.createElement('button');
+                                 queueButton.textContent = 'Queue';
+                                 queueButton.classList.add('trackQueueBtn');
+                                 queueButton.setAttribute('trackQueueID', track.trackID); 
 
                                 // Add event listener for when the button is clicked
                                 addButton.addEventListener('click', function() {
@@ -168,9 +174,34 @@ function sendArtist() {
                                             console.error('Error adding track:', error);
                                     });
                                 });
+                                
+                                // Add event listener for when the button is clicked
+                                queueButton.addEventListener('click', function() {
+                                    // When clicked, send the track ID to Flask
+                                    const trackID = queueButton.getAttribute('trackQueueID');
+                                    console.log('Track ID to queue:', trackID);
+                                    
+                                    // Send trackID to Flask via a POST request using Fetch API
+                                    fetch('/queueTrack', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
+                                    })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            console.log('Track queue info received:', data);
+                                            
+                                        })
+                                        .catch((error) => {
+                                            console.error('Error queueing track:', error);
+                                    });
+                                });
 
                                 // Append the "Add" and "Play" buttons after the track name
                                 trackListItem.appendChild(playButton);
+                                trackListItem.appendChild(queueButton);
                                 trackListItem.appendChild(addButton);
 
                                 // Append the track list item to the list
