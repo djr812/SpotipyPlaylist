@@ -54,6 +54,45 @@ body {
     100% { opacity: 1; }
 }
 
+.artistSearchOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Make sure it sits on top of other content */
+}
+
+.artistSearchPopup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+#artistSearchResultsList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#artistSearchResultsList li {
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+}
+
+#artistSearchResultsList li:hover {
+    background-color: #f1f1f1;
+}
+
 #artistName {
     width: 250px;      /* Set the width */
     height: 20px;      /* Set the height */

@@ -1,4 +1,5 @@
 let playlistDict = {}
+const hiddenDiv = document.getElementById("artist");
 
 setInterval(function () {
     fetch('/getNewSongPlaying') // Call your Flask route /getNewSongPlaying to get fresh song info
@@ -19,22 +20,81 @@ setInterval(function () {
 }, 5000); // Every 5000 milliseconds (5 seconds)
 
 function sendArtist() {
-    let inputValue = document.getElementById('artistName').value;
+    let artistToSearch = document.getElementById('artistName').value;
 
-    const hiddenDiv = document.getElementById("artist");
     document.getElementById("searchingOverlay").style.display = "flex";
 
     // Send inputValue to Flask via a POST request using Fetch API
-    fetch('/searchArtist', {
+    fetch('/searchArtists', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input: inputValue }),
+        body: JSON.stringify({ input: artistToSearch }),
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('Success. Found data for ', data.artistName);
+            console.log('Success. Found a set of Artists');
+            showArtistSearchOverlay(data.artistsDict);
+
+        })
+};
+
+function showArtistSearchOverlay(artists) {
+    const artistSearchOverlay = document.getElementById('artistSearchOverlay');
+    const artistSearchResultsList = document.getElementById('artistSearchResultsList');
+
+    // Clear previous results
+    artistSearchResultsList.innerHTML = '';
+
+    // Create a list item for each result
+    artistIndex = 1;
+    for (const artist in artists) {
+        const li = document.createElement('li');
+        artistName = artists[artistIndex][0];
+        li.textContent = artistName;
+        li.onclick = () => selectResult(artist, artists);
+        artistSearchResultsList.appendChild(li);
+        ++artistIndex;
+    };
+
+    // Show the overlay
+    artistSearchOverlay.style.display = 'flex';
+}
+
+// Function to close the overlay
+function closeArtistSearchOverlay() {
+    const artistSearchOverlay = document.getElementById('artistSearchOverlay');
+    artistSearchOverlay.style.display = 'none';
+}
+
+// Function to handle selection of a search result
+function selectResult(artistIndex, artists) {
+    document.getElementById("searchingOverlay").style.display = "none";
+    // Here you can process the selected result
+    console.log('Selected result:', artistIndex);
+    artistURI = artists[artistIndex][1];
+    // Close the overlay after selection
+    closeArtistSearchOverlay();
+
+    // Optionally, you can display the selected result on the page or perform some action
+    // alert('You selected: ' + artist);
+    searchByArtistURI(artistURI);
+}
+
+// Function to fetch Artist details from Flask and display
+function searchByArtistURI(artistURI) {
+    document.getElementById("searchingOverlay").style.display = "flex";
+    fetch('/searchArtistByURI', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input: artistURI }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Success. Found the Artist');
 
             // Clear existing content before adding new data
             document.getElementById('artistAlbums').innerHTML = '';

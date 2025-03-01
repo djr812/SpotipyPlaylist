@@ -89,31 +89,57 @@ def getNewSongPlaying():
     return jsonify(songPlaying)
 
 
-@app.route('/searchArtist', methods=['POST'])
-def searchArtist():
+@app.route('/searchArtists', methods=['POST'])
+def searchArtists():
     # Extract the artistName from the request
     getArtistName = request.json.get('input')
     
-    # Search Spotify for the artistName
-    searchResults = sp.search(getArtistName,1,0,"artist")
-
+    # Search Spotify for the top 10 matches to entered getArtistName
+    searchResults = sp.search(getArtistName,10,0,"artist")
+    
     # Extract data from searchResults
-    artistGenres = []
+    
+    artistIndex = 0
+    artistsDict = {}
+    
+    artists = searchResults['artists']['items']
 
-    artist = searchResults['artists']['items'][0]
-    artistName = artist['name']
-    artistFollowers = artist['followers']['total']
-    if artist['genres'] != []:
-        artistGenres = artist['genres']
+    for artist in artists:
+        artistDetails = []
+        artistName = searchResults['artists']['items'][artistIndex]['name']
+        artistDetails.append(artistName)
+        artistURI = searchResults['artists']['items'][artistIndex]['uri']
+        artistDetails.append(artistURI)
+        artistIndex += 1
+        artistsDict[artistIndex] = artistDetails
+    
+    # Respond back with artistsDict
+    return jsonify({
+        'artistsDict':artistsDict,
+        'message': f'You sent: {getArtistName}'}), 200
+
+
+@app.route('/searchArtistByURI', methods=['POST'])
+def searchArtistByURI():
+
+    getArtistURI = request.json.get('input')
+
+    artistDetails = sp.artist(getArtistURI)
+
+    artistGenres = []
+    artistName = artistDetails['name']
+    artistFollowers = artistDetails['followers']['total']
+    if artistDetails['genres'] != []:
+         artistGenres = artistDetails['genres']
     else:
-        artistGenres = []
-    artistID = artist['id']
-    if artist['images'] != []:
-        artistArt = artist['images'][0]['url']
+         artistGenres = []
+    artistID = getArtistURI
+    if artistDetails['images'] != []:
+        artistArt = artistDetails['images'][0]['url']
     else:
         artistArt = ""
 
-    # Album and Track details
+    #Album and Track details
     albumsDict = {}
     i = 0
     
@@ -146,14 +172,14 @@ def searchArtist():
         albumsDict[albumID] = albumDict  # Add the albumDict to albumsDict with albumID as the key
 
 
-    # Respond back with a message (could be any response you want)
+    # # Respond back with a message (could be any response you want)
     return jsonify({
         'artistName':artistName,
         'artistFollowers':artistFollowers,
         'artistGenres':artistGenres,
         'artistArt':artistArt,
         'albumsDict':albumsDict,
-        'message': f'You sent: {getArtistName}'}), 200
+        'message': f'You sent: {artistName}'}), 200
 
 
 @app.route('/getTrackData', methods=['POST'])
