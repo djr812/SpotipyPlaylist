@@ -53,7 +53,7 @@ function showArtistSearchOverlay(artists) {
         const li = document.createElement('li');
         artistName = artists[artistIndex][0];
         li.textContent = artistName;
-        li.onclick = () => selectResult(artist, artists);
+        li.onclick = () => selectArtistResult(artist, artists);
         artistSearchResultsList.appendChild(li);
         ++artistIndex;
     };
@@ -69,7 +69,7 @@ function closeArtistSearchOverlay() {
 }
 
 // Function to handle selection of a search result
-function selectResult(artistIndex, artists) {
+function selectArtistResult(artistIndex, artists) {
     document.getElementById("searchingOverlay").style.display = "none";
     // Here you can process the selected result
     console.log('Selected result:', artistIndex);

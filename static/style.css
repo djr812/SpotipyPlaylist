@@ -93,36 +93,65 @@ body {
     background-color: #f1f1f1;
 }
 
-#artistName {
+#artistName, #songName {
     width: 250px;      /* Set the width */
     height: 20px;      /* Set the height */
-}
-
-#sendArtist {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #1DB954;
-    color: white;
-    border: none;
-    margin-bottom: 1px;
-    outline: 1px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 40px;
-    width: auto;   
-}
-
-#sendArtist:hover {
-    background-color: darkgreen;
+    margin-bottom: 10px;
 }
 
 .userDetails {
     text-align: center;
 }
 
-.artistSearch {
-    text-align: center;
+#sendSongBtn, #sendArtistBtn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #1DB954;
+    color: white;
+    border: none;
+    margin-bottom: 10px;
+    outline: 1px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 40px;
+    width: auto;     
 }
+
+#sendSongBtn:hover, #sendArtistBtn:hover {
+    background-color: darkgreen;
+}
+
+.searchSection {
+    display: flex;              /* Use flexbox to lay out the children in a row */
+    justify-content: center;    /* Centers the items horizontally */
+    align-items: center;        /* Centers the items vertically */
+    gap: 20px;                  /* Adds space between the two divs */
+}
+  
+.songSearch, .artistSearch {
+    padding: 20px;
+    border: 1px solid #ccc;    /* Optional: Adds a border to each section */
+    background-color: #f4f4f4; /* Optional: Adds a background color */
+    display: flex;
+    flex-direction: column;     /* Stacks the elements vertically inside each div */
+    justify-content: center;    /* Centers content vertically inside each div */
+    align-items: center;        /* Centers content horizontally inside each div */
+    width: 300px;               /* Optional: Sets a fixed width for the search boxes */
+    height: 40px;
+    border-radius: 15px;
+}
+  
+h3 {
+    margin-bottom: 5px;        /* Adds space below the heading */
+}
+
+.searchContainer {
+    display: flex;              /* Makes input and button align side by side */
+    justify-content: center;    /* Centers the input and button horizontally */
+    flex-direction: row;
+    align-items: center;        /* Centers the input and button vertically */
+    gap: 10px;                  /* Adds space between the input and button */
+  }
 
 .artistSection {
     display: grid;

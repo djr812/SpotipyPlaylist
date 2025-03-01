@@ -21,11 +21,20 @@
             <h2>Creating Playlists for {{ displayName }} who has {{ followers }} followers.</h2>
         </div>
     </section>
-    <section>
+    <section class="searchSection">
+        <div class="songSearch">
+            <h3>Search for a Song Title</h3>
+            <div class="searchContainer">
+                <input type="text" id="songName" name="songName" placeholder="Enter a Song Title here">
+                <button type="button" id="sendSongBtn" onclick="sendSong()">GO</button>
+            </div>
+        </div>
         <div class="artistSearch">
             <h3>Search for an Artist</h3>
-            <input type="text" id="artistName" name="artistName" placeholder="Enter Artist's Name here">
-            <button type="button" id="sendArtist" onclick="sendArtist()">GO</button>
+            <div class="searchContainer">
+                <input type="text" id="artistName" name="artistName" placeholder="Enter Artist's Name here">
+                <button type="button" id="sendArtistBtn" onclick="sendArtist()">GO</button>
+            </div>
         </div>
         <div id="searchingOverlay" class="overlay">
             <div class="overlayContent">
