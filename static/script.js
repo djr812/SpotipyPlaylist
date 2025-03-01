@@ -294,6 +294,74 @@ function searchByArtistURI(artistURI) {
         });
 }
 
+function sendSong() {
+    let songToSearch = document.getElementById('songName').value;
+
+    document.getElementById("searchingOverlay").style.display = "flex";
+
+    // Send inputValue to Flask via a POST request using Fetch API
+    fetch('/searchSongs', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input: songToSearch }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Success. Found a set of Songs');
+            showSongsSearchOverlay(data.songsDict);
+
+        })
+};
+
+function showSongsSearchOverlay(songs) {
+    const songsSearchOverlay = document.getElementById('songsSearchOverlay');
+    const songsSearchResultsList = document.getElementById('songsSearchResultsList');
+    console.log(songs);
+    // Clear previous results
+    songsSearchResultsList.innerHTML = '';
+
+    // Create a list item for each result
+    songIndex = 1;
+    for (const song in songs) {
+        const li = document.createElement('li');
+        const img = document.createElement('img');
+        const container = document.createElement('div'); 
+    
+        songName = songs[songIndex][0];
+        songAlbumName = songs[songIndex][2];
+        songArtistName = songs[songIndex][4];
+        songAlbumImage = songs[songIndex][3];
+        
+        img.src = songAlbumImage;
+        img.alt = `Image of ${songAlbumName}`;
+        img.classList.add('songImage');  
+    
+        li.textContent = songName + ' By ' + songArtistName + ' From ' + songAlbumName;
+        li.classList.add('song-text');  
+        
+        container.appendChild(img);
+        container.appendChild(li);      
+        songsSearchResultsList.appendChild(container); 
+    
+        container.classList.add('songContainer');  
+    
+        ++songIndex;
+    };
+
+    // Show the overlay
+    songsSearchOverlay.style.display = 'flex';
+}
+
+
+// Function to close the overlay
+function closeSongsSearchOverlay() {
+    const songsSearchOverlay = document.getElementById('songsSearchOverlay');
+    songsSearchOverlay.style.display = 'none';
+}
+
+
 function buildPlaylist(data) {
     // Get the div with the class 'playlist'
     const playlistSection = document.getElementById('playlist');

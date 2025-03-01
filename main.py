@@ -181,6 +181,46 @@ def searchArtistByURI():
         'albumsDict':albumsDict,
         'message': f'You sent: {artistName}'}), 200
 
+@app.route('/searchSongs', methods=['POST'])
+def searchSongs():
+    # Extract the artistName from the request
+    getSongName = request.json.get('input')
+    
+    # Search Spotify for the top 10 matches to entered getSongName
+    searchResults = sp.search(getSongName,10,0,"track","AU")
+    #print(searchResults)
+    # Extract data from searchResults
+    
+    songIndex = 0
+    songsDict = {}
+    
+    songs = searchResults['tracks']['items']
+
+    for song in songs:
+        songDetails = []
+        songName = searchResults['tracks']['items'][songIndex]['name']
+        songDetails.append(songName)
+        songURI = searchResults['tracks']['items'][songIndex]['uri']
+        songDetails.append(songURI)
+        songAlbumName = searchResults['tracks']['items'][songIndex]['album']['name']
+        songDetails.append(songAlbumName)
+        songAlbumImage = searchResults['tracks']['items'][songIndex]['album']['images'][2]["url"]
+        songDetails.append(songAlbumImage)
+        songArtistName = searchResults['tracks']['items'][songIndex]['artists'][0]['name']
+        songDetails.append(songArtistName)
+        songIndex += 1
+        songsDict[songIndex] = songDetails
+    
+    # print (songsDict)
+
+    # Respond back with artistsDict
+    return jsonify({
+        'songsDict':songsDict,
+        'message': f'You sent: {getSongName}'}), 200
+
+
+
+
 
 @app.route('/getTrackData', methods=['POST'])
 def getTrackData():
