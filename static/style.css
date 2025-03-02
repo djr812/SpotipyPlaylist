@@ -54,6 +54,10 @@ body {
     100% { opacity: 1; }
 }
 
+.artistAlbums {
+    display: none;
+}
+
 .artistSearchOverlay {
     position: fixed;
     top: 0;
@@ -131,7 +135,7 @@ body {
     padding: 10px;
     cursor: pointer;
     border: 1px solid #ccc;
-    margin: 5px 0;
+    margin-left: 10px;
 }
 
 #songsSearchResultsList li:hover {

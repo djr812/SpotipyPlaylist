@@ -181,14 +181,15 @@ def searchArtistByURI():
         'albumsDict':albumsDict,
         'message': f'You sent: {artistName}'}), 200
 
+
 @app.route('/searchSongs', methods=['POST'])
 def searchSongs():
     # Extract the artistName from the request
     getSongName = request.json.get('input')
     
-    # Search Spotify for the top 10 matches to entered getSongName
-    searchResults = sp.search(getSongName,10,0,"track","AU")
-    #print(searchResults)
+    # Search Spotify for the top 5 matches to entered getSongName
+    searchResults = sp.search(getSongName,5,0,"track","AU")
+    # print(json.dumps(searchResults, sort_keys=True, indent=4))
     # Extract data from searchResults
     
     songIndex = 0
@@ -208,6 +209,8 @@ def searchSongs():
         songDetails.append(songAlbumImage)
         songArtistName = searchResults['tracks']['items'][songIndex]['artists'][0]['name']
         songDetails.append(songArtistName)
+        songArtistURI = searchResults['tracks']['items'][songIndex]['artists'][0]['uri']
+        songDetails.append(songArtistURI)
         songIndex += 1
         songsDict[songIndex] = songDetails
     
@@ -217,9 +220,6 @@ def searchSongs():
     return jsonify({
         'songsDict':songsDict,
         'message': f'You sent: {getSongName}'}), 200
-
-
-
 
 
 @app.route('/getTrackData', methods=['POST'])

@@ -1,5 +1,4 @@
 let playlistDict = {}
-const hiddenDiv = document.getElementById("artist");
 
 setInterval(function () {
     fetch('/getNewSongPlaying') // Call your Flask route /getNewSongPlaying to get fresh song info
@@ -22,7 +21,9 @@ setInterval(function () {
 function sendArtist() {
     let artistToSearch = document.getElementById('artistName').value;
 
-    document.getElementById("searchingOverlay").style.display = "flex";
+    turnOnSearchingOverlay();
+    turnOffArtistSection();
+    turnOffArtistAlbums();
 
     // Send inputValue to Flask via a POST request using Fetch API
     fetch('/searchArtists', {
@@ -35,13 +36,13 @@ function sendArtist() {
         .then((response) => response.json())
         .then((data) => {
             console.log('Success. Found a set of Artists');
+            document.getElementById('artistName').value = '';
             showArtistSearchOverlay(data.artistsDict);
 
         })
 };
 
 function showArtistSearchOverlay(artists) {
-    const artistSearchOverlay = document.getElementById('artistSearchOverlay');
     const artistSearchResultsList = document.getElementById('artistSearchResultsList');
 
     // Clear previous results
@@ -59,32 +60,25 @@ function showArtistSearchOverlay(artists) {
     };
 
     // Show the overlay
-    artistSearchOverlay.style.display = 'flex';
+    turnOnArtistSearchOverlay();
 }
 
-// Function to close the overlay
-function closeArtistSearchOverlay() {
-    const artistSearchOverlay = document.getElementById('artistSearchOverlay');
-    artistSearchOverlay.style.display = 'none';
-}
 
 // Function to handle selection of a search result
 function selectArtistResult(artistIndex, artists) {
-    document.getElementById("searchingOverlay").style.display = "none";
-    // Here you can process the selected result
+
     console.log('Selected result:', artistIndex);
     artistURI = artists[artistIndex][1];
-    // Close the overlay after selection
-    closeArtistSearchOverlay();
+    
+    // Turn off the overlay after selection
+    turnOffArtistSearchOverlay();
 
-    // Optionally, you can display the selected result on the page or perform some action
-    // alert('You selected: ' + artist);
     searchByArtistURI(artistURI);
 }
 
 // Function to fetch Artist details from Flask and display
 function searchByArtistURI(artistURI) {
-    document.getElementById("searchingOverlay").style.display = "flex";
+    turnOnSearchingOverlay();
     fetch('/searchArtistByURI', {
         method: 'POST',
         headers: {
@@ -174,11 +168,11 @@ function searchByArtistURI(artistURI) {
                                 playButton.classList.add('trackPlayBtn');
                                 playButton.setAttribute('trackPlayID', track.trackID);  
                                 
-                                 // Create 'Queue' button for each track
-                                 const queueButton = document.createElement('button');
-                                 queueButton.textContent = 'Queue';
-                                 queueButton.classList.add('trackQueueBtn');
-                                 queueButton.setAttribute('trackQueueID', track.trackID); 
+                                // Create 'Queue' button for each track
+                                const queueButton = document.createElement('button');
+                                queueButton.textContent = 'Queue';
+                                queueButton.classList.add('trackQueueBtn');
+                                queueButton.setAttribute('trackQueueID', track.trackID); 
 
                                 // Add event listener for when the button is clicked
                                 addButton.addEventListener('click', function() {
@@ -206,7 +200,7 @@ function searchByArtistURI(artistURI) {
                                                 playlistIndex = Object.keys(playlistDict).length + 1;
                                             }
                                             playlistDict[playlistIndex] = data.playlistItem;
-                                            console.log(playlistDict); 
+                                            console.log('Add to Playlist: Index='+ playlistIndex + " " + playlistDict[playlistIndex]);  
                                             buildPlaylist(playlistDict);
                                         })
                                         .catch((error) => {
@@ -285,19 +279,23 @@ function searchByArtistURI(artistURI) {
 
             // Append the albums container to the main display element
             displayElement.appendChild(albumsContainer);
-            document.getElementById("searchingOverlay").style.display = "none";
-            hiddenDiv.style.display = "block";
+
+            // Turn off 'searching...' overlay and turn on hidden section
+            turnOffSearchingOverlay();
+            turnOnArtistSection();
+            turnOnArtistAlbums();
         })
         .catch((error) => {
-            document.getElementById("searchingOverlay").style.display = "none";
+            turnOffSearchingOverlay();
             console.error('Error:', error);
         });
 }
 
 function sendSong() {
     let songToSearch = document.getElementById('songName').value;
-
-    document.getElementById("searchingOverlay").style.display = "flex";
+    turnOffArtistSection();
+    turnOffArtistAlbums();
+    turnOnSearchingOverlay();
 
     // Send inputValue to Flask via a POST request using Fetch API
     fetch('/searchSongs', {
@@ -310,15 +308,16 @@ function sendSong() {
         .then((response) => response.json())
         .then((data) => {
             console.log('Success. Found a set of Songs');
+            document.getElementById('songName').value = '';
             showSongsSearchOverlay(data.songsDict);
 
         })
 };
 
+
 function showSongsSearchOverlay(songs) {
-    const songsSearchOverlay = document.getElementById('songsSearchOverlay');
     const songsSearchResultsList = document.getElementById('songsSearchResultsList');
-    console.log(songs);
+
     // Clear previous results
     songsSearchResultsList.innerHTML = '';
 
@@ -333,13 +332,15 @@ function showSongsSearchOverlay(songs) {
         songAlbumName = songs[songIndex][2];
         songArtistName = songs[songIndex][4];
         songAlbumImage = songs[songIndex][3];
+        songArtistURI = songs[songIndex][5];
         
         img.src = songAlbumImage;
         img.alt = `Image of ${songAlbumName}`;
         img.classList.add('songImage');  
     
         li.textContent = songName + ' By ' + songArtistName + ' From ' + songAlbumName;
-        li.classList.add('song-text');  
+        li.classList.add('songText'); 
+        li.onclick = () => selectSongResult(song, songs); 
         
         container.appendChild(img);
         container.appendChild(li);      
@@ -351,18 +352,166 @@ function showSongsSearchOverlay(songs) {
     };
 
     // Show the overlay
-    songsSearchOverlay.style.display = 'flex';
+    turnOffSearchingOverlay();
+    turnOnSongsSearchOverlay();
 }
 
 
-// Function to close the overlay
+// Function to handle selection of a search result
+function selectSongResult(songIndex, songs) {
+
+    console.log('Selected result:', songIndex);
+    songName = songs[songIndex][0];
+    songURI = songs[songIndex][1];
+    songArtistName = songs[songIndex][4];
+    artistURI = songs[songIndex][5];
+    // Close the overlay after selection
+    turnOffSongsSearchOverlay();
+    turnOffArtistSection();
+    turnOffArtistAlbums();
+    turnOnSearchingOverlay();
+    searchBySongURI(songName, songArtistName, songURI, artistURI);
+}
+
+
+// Function to fetch Artist details from Flask and display
+function searchBySongURI(songName, songArtistName, songURI, artistURI) {
+    
+    // Get the artist details to render
+    fetch('/searchArtistByURI', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input: artistURI }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Success. Found the Artist');
+            // Turn off 'searching...' overlay
+            turnOffSearchingOverlay();
+            // Render the remainder of the page
+            turnOnArtistSection();
+
+            // Clear existing content before adding new data
+            document.getElementById('artistAlbums').innerHTML = '';
+            // Fill in the artistSection with new data
+            document.querySelector('.artistCol1Heading').textContent = data.artistName
+            document.querySelector('.artistImage').innerHTML = `<img src="${data.artistArt}" alt="Image of ${data.artistName}" style="width: 300px; height: 300px;">`
+            document.querySelector('.artistInfo').innerHTML = `
+                <p><strong>Followers:</strong> ${data.artistFollowers.toLocaleString()}</p>
+                <p><strong>Genres:</strong></p>
+                <ul>
+                    ${data.artistGenres.map(genre => `<li>${genre}</li>`).join('')}
+                </ul>
+            `;
+            //let playlistDict = {};
+            if (Object.keys(playlistDict).length === 0) {
+                playlistIndex = 1;
+            } else {
+                playlistIndex = Object.keys(playlistDict).length + 1;
+            }
+            playlistDict[playlistIndex] = [songURI, songName, songArtistName]; 
+            console.log('Add to Playlist: Index='+ playlistIndex + " " + playlistDict[playlistIndex]);   
+            buildPlaylist(playlistDict);
+        });
+    
+};
+
+
+function closeArtistSearchOverlay() {
+    turnOffArtistSearchOverlay();
+    turnOffSearchingOverlay();
+};
+
+
 function closeSongsSearchOverlay() {
+    turnOffSongsSearchOverlay();
+    turnOffSearchingOverlay();
+};
+
+
+// Function to turn ON hidden artistAlbums
+function turnOnArtistAlbums() {
+    const artistAlbums = document.getElementById("artistAlbums");
+    artistAlbums.style.display = "block";
+    // console.log('turn On Artist Albums');
+};
+
+
+// Function to turn OFF hidden artistSection
+function turnOffArtistAlbums() {
+    const artistAlbums = document.getElementById("artistAlbums");
+    artistAlbums.style.display = "none";
+    // console.log('turn Off Artist Albums');
+};
+
+
+// Function to turn ON hidden artistSection
+function turnOnArtistSection() {
+    const artistSection = document.getElementById("artist");
+    artistSection.style.display = "block";
+    // console.log('turn On Artist Section');
+};
+
+
+// Function to turn OFF hidden artistSection
+function turnOffArtistSection() {
+    const artistSection = document.getElementById("artist");
+    artistSection.style.display = "none";
+    // console.log('turn Off Artist Section');
+};
+
+
+// Function to turn OFF searchingOverlay
+function turnOnSearchingOverlay() {
+    const searchingOverlay = document.getElementById("searchingOverlay");
+    searchingOverlay.style.display = "flex";
+    // console.log('turn On Searching Overlay');
+};
+
+
+// Function to turn OFF searchingOverlay
+function turnOffSearchingOverlay() {
+    const searchingOverlay = document.getElementById("searchingOverlay");
+    searchingOverlay.style.display = "none";
+    // console.log('turn Off Searching Overlay');
+};
+
+
+// Function to turn ON SongsSearchOverlay
+function turnOnSongsSearchOverlay() {
+    const songsSearchOverlay = document.getElementById('songsSearchOverlay');
+    songsSearchOverlay.style.display = 'flex';
+    // console.log('turn On Songs Search Overlay');
+};
+
+
+// Function to turn OFF SongsSearchOverlay
+function turnOffSongsSearchOverlay() {
     const songsSearchOverlay = document.getElementById('songsSearchOverlay');
     songsSearchOverlay.style.display = 'none';
-}
+    // console.log('turn Off Songs Search Overlay');
+};
 
 
-function buildPlaylist(data) {
+// Function to turn ON artistSearchOverlay
+function turnOnArtistSearchOverlay() {
+    const artistSearchOverlay = document.getElementById('artistSearchOverlay');
+    artistSearchOverlay.style.display = 'flex';
+    // console.log('turn On Artist Search Overlay');
+};
+
+
+// Function to turn OFF artistSearchOverlay
+function turnOffArtistSearchOverlay() {
+    const artistSearchOverlay = document.getElementById('artistSearchOverlay');
+    artistSearchOverlay.style.display = 'none';
+    // console.log('turn Off Artist Search Overlay');
+};
+
+
+function buildPlaylist(playlistDict) {
     // Get the div with the class 'playlist'
     const playlistSection = document.getElementById('playlist');
     
@@ -370,14 +519,14 @@ function buildPlaylist(data) {
     playlistSection.innerHTML = '';
 
     // Loop through the received object (assuming it's an object where the key is 'id' and the value is an array of tracks)
-    for (const id in data) {
-        if (data.hasOwnProperty(id)) {
+    for (const id in playlistDict) {
+        if (playlistDict.hasOwnProperty(id)) {
             // Create a new div to hold the track names for this id
             const trackDiv = document.createElement('div');
             trackDiv.classList.add('plTracks'); 
 
             // Get the array of tracks for this id
-            const tracks = data[id];
+            const tracks = playlistDict[id];
             
             const trackContainer = document.createElement('div');
             trackContainer.classList.add('plTrack'); 
@@ -393,10 +542,8 @@ function buildPlaylist(data) {
 
             // Add an event listener to the delete button
             deleteButton.addEventListener('click', () => {
-                // You can perform actions to delete the track here
                 trackDiv.remove();
                 deleteFromPlaylist(tracks[1])
-                console.log(playlistDict);
             });
 
             // Append the track name and delete button to the track container
@@ -410,6 +557,12 @@ function buildPlaylist(data) {
             playlistSection.appendChild(trackDiv);
         }
     }
+    
+    console.log(Object.entries(playlistDict))
+    
+    //for (const id in playlistDict) {
+    //    console.dir('PlaylistDict: Index= ' + id + ' ' + playlistDict[id]);
+    //};
 }
 
 function clearPL() {
@@ -425,20 +578,44 @@ function deleteFromPlaylist(trackToDelete) {
             const track = playlistDict[key];
             
             if (track[1] === trackToDelete) {
-                // If the trackName matches, delete this array using splice
-                // Since splice modifies the array in place, we remove the element at the current index
-                playlistDict[key].splice(0, 2);  // Removes the trackID and trackName from the array
+                console.log('Delete from playlistDict: Index=' + key + ' ' + track);
+                // If the trackName matches, removes that trackID and trackName from the array
+                playlistDict[key].splice(0, 2);  // 
     
-                // Optionally, delete the key from the dictionary if you don't want the key-value pair
+                // Delete the key from the playlistDict
                 delete playlistDict[key];
     
                 break;  // Exit the loop after deleting the track
             }
         }
     }
-    console.log(playlistDict);
+    // Re-number the keys to match index
+    keys = Object.keys(playlistDict);
+    newKey = 1;
+    for (const [key, value] of Object.entries(playlistDict)) {
+        if (newKey != key){
+            setNewKeyForValue(playlistDict, value, newKey)
+        }
+        ++newKey;
+    };
+    
+    // rebuild index of playlistDict
+
+
     buildPlaylist(playlistDict);
 };
+
+
+function setNewKeyForValue(obj, oldValue, newKey) {
+    for (let [key, value] of Object.entries(obj)) {
+      if (value === oldValue) {
+        obj[newKey] = oldValue;  // Set the new key
+        delete obj[key];         // Remove the old key
+        break;                   // Exit once the value is found
+      }
+    }
+  }
+
 
 function createPlaylist() {
     let playlist = {};
