@@ -158,8 +158,6 @@ function searchByArtistURI(artistURI) {
                                 const addButton = document.createElement('button');
                                 addButton.textContent = 'Add'; // Button text
                                 addButton.classList.add('plAddButton'); // Add a class for styling if necessary
-                                
-                                // Store the track ID in the button's data attribute
                                 addButton.setAttribute('plTrackID', track.trackID);
                                 
                                 // Create 'Play' button for each track
@@ -174,86 +172,25 @@ function searchByArtistURI(artistURI) {
                                 queueButton.classList.add('trackQueueBtn');
                                 queueButton.setAttribute('trackQueueID', track.trackID); 
 
-                                // Add event listener for when the button is clicked
+                                // Add event listener for add button
                                 addButton.addEventListener('click', function() {
                                     // When clicked, send the track ID to Flask
                                     const trackID = addButton.getAttribute('plTrackID');
-                                    console.log('Track ID to add:', trackID);
-                                    
-                                    // Send trackID to Flask via a POST request using Fetch API
-                                    fetch('/getTrackData', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
-                                    })
-                                        .then((response) => response.json())
-                                        .then((data) => {
-                                            console.log('Track info received:', data);
-                                            
-                                            // Use 'data' to start building playlistDict object
-                                            let playlistIndex;
-                                            if (Object.keys(playlistDict).length === 0) {
-                                                playlistIndex = 1;
-                                            } else {
-                                                playlistIndex = Object.keys(playlistDict).length + 1;
-                                            }
-                                            playlistDict[playlistIndex] = data.playlistItem;
-                                            console.log('Add to Playlist: Index='+ playlistIndex + " " + playlistDict[playlistIndex]);  
-                                            buildPlaylist(playlistDict);
-                                        })
-                                        .catch((error) => {
-                                            console.error('Error adding track:', error);
-                                    });
+                                    addButtonPressed(trackID);
                                 });
 
-                                // Add event listener for when the button is clicked
+                                // Add event listener for play button
                                 playButton.addEventListener('click', function() {
                                     // When clicked, send the track ID to Flask
                                     const trackID = playButton.getAttribute('trackPlayID');
-                                    console.log('Track ID to play:', trackID);
-                                    
-                                    // Send trackID to Flask via a POST request using Fetch API
-                                    fetch('/playTrack', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
-                                    })
-                                        .then((response) => response.json())
-                                        .then((data) => {
-                                            console.log('Track play info received:', data);
-                                            
-                                        })
-                                        .catch((error) => {
-                                            console.error('Error adding track:', error);
-                                    });
+                                    playButtonPressed(trackID);
                                 });
-                                
-                                // Add event listener for when the button is clicked
+
+                                // Add event listener for queue button
                                 queueButton.addEventListener('click', function() {
                                     // When clicked, send the track ID to Flask
                                     const trackID = queueButton.getAttribute('trackQueueID');
-                                    console.log('Track ID to queue:', trackID);
-                                    
-                                    // Send trackID to Flask via a POST request using Fetch API
-                                    fetch('/queueTrack', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
-                                    })
-                                        .then((response) => response.json())
-                                        .then((data) => {
-                                            console.log('Track queue info received:', data);
-                                            
-                                        })
-                                        .catch((error) => {
-                                            console.error('Error queueing track:', error);
-                                    });
+                                    queueButtonPressed(trackID)
                                 });
 
                                 // Append the "Add" and "Play" buttons after the track name
@@ -280,7 +217,7 @@ function searchByArtistURI(artistURI) {
             // Append the albums container to the main display element
             displayElement.appendChild(albumsContainer);
 
-            // Turn off 'searching...' overlay and turn on hidden section
+            // Turn off 'searching...' overlay and turn on hidden sections
             turnOffSearchingOverlay();
             turnOnArtistSection();
             turnOnArtistAlbums();
@@ -290,6 +227,84 @@ function searchByArtistURI(artistURI) {
             console.error('Error:', error);
         });
 }
+
+
+function addButtonPressed(trackID){
+    // When clicked, send the track ID to Flask
+    console.log('Track ID to add:', trackID);
+    
+    // Send trackID to Flask via a POST request using Fetch API
+    fetch('/getTrackData', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Track info received:', data);
+            
+            // Use 'data' to start building playlistDict object
+            let playlistIndex;
+            if (Object.keys(playlistDict).length === 0) {
+                playlistIndex = 1;
+            } else {
+                playlistIndex = Object.keys(playlistDict).length + 1;
+            }
+            playlistDict[playlistIndex] = data.playlistItem;
+            console.log('Add to Playlist: Index='+ playlistIndex + " " + playlistDict[playlistIndex]);  
+            buildPlaylist(playlistDict);
+        })
+        .catch((error) => {
+            console.error('Error adding track:', error);
+    });
+}
+
+
+function playButtonPressed(trackID){
+    console.log('Track ID to play:', trackID);
+                                    
+    // Send trackID to Flask via a POST request using Fetch API
+    fetch('/playTrack', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Track play info received:', data);
+            
+        })
+        .catch((error) => {
+            console.error('Error adding track:', error);
+    });
+}
+
+
+function queueButtonPressed(trackID){
+    console.log('Track ID to queue:', trackID);
+                                    
+    // Send trackID to Flask via a POST request using Fetch API
+    fetch('/queueTrack', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ trackID: trackID }),  // Send trackID as JSON
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Track queue info received:', data);
+            
+        })
+        .catch((error) => {
+            console.error('Error queueing track:', error);
+    })
+}
+
 
 function sendSong() {
     let songToSearch = document.getElementById('songName').value;
@@ -323,29 +338,57 @@ function showSongsSearchOverlay(songs) {
 
     // Create a list item for each result
     songIndex = 1;
-    for (const song in songs) {
+    for (const [index, song] of Object.entries(songs)) {
         const li = document.createElement('li');
         const img = document.createElement('img');
         const container = document.createElement('div'); 
+        const playButton = document.createElement('button');
+        const queueButton = document.createElement('button');
+        const addButton = document.createElement('button');
     
-        songName = songs[songIndex][0];
-        songAlbumName = songs[songIndex][2];
-        songArtistName = songs[songIndex][4];
-        songAlbumImage = songs[songIndex][3];
-        songArtistURI = songs[songIndex][5];
+        // songName = songs[songIndex][0];
+        // songURI = songs[songIndex][1];
+        // songAlbumName = songs[songIndex][2];
+        // songArtistName = songs[songIndex][4];
+        // songAlbumImage = songs[songIndex][3];
+        // songArtistURI = songs[songIndex][5];
         
+        const songName = song[0];
+        const songURI = song[1];
+        const songAlbumName = song[2];
+        const songArtistName = song[4];
+        const songAlbumImage = song[3];
+        const songArtistURI = song[5];
+
         img.src = songAlbumImage;
         img.alt = `Image of ${songAlbumName}`;
         img.classList.add('songImage');  
     
         li.textContent = songName + ' By ' + songArtistName + ' From ' + songAlbumName;
-        li.classList.add('songText'); 
-        li.onclick = () => selectSongResult(song, songs); 
+        li.classList.add('songText');  
         
+        addButton.type = 'button';
+        addButton.textContent = 'Add';
+        addButton.classList.add('addSong');
+        addButton.onclick = () => selectSongResult(song);
+
+        console.log(songURI);
+        playButton.type = 'button';
+        playButton.textContent = 'Play';
+        playButton.classList.add('playSong');
+        playButton.onclick = () => playButtonPressed(songURI);
+
+        queueButton.type = 'button';
+        queueButton.textContent = 'Queue';
+        queueButton.classList.add('queueSong');
+        queueButton.onclick = () => queueButtonPressed(songURI);
+
         container.appendChild(img);
-        container.appendChild(li);      
+        container.appendChild(li);    
+        container.appendChild(playButton);
+        container.appendChild(queueButton); 
+        container.appendChild(addButton); 
         songsSearchResultsList.appendChild(container); 
-    
         container.classList.add('songContainer');  
     
         ++songIndex;
@@ -358,13 +401,13 @@ function showSongsSearchOverlay(songs) {
 
 
 // Function to handle selection of a search result
-function selectSongResult(songIndex, songs) {
+function selectSongResult(song) {
 
-    console.log('Selected result:', songIndex);
-    songName = songs[songIndex][0];
-    songURI = songs[songIndex][1];
-    songArtistName = songs[songIndex][4];
-    artistURI = songs[songIndex][5];
+    console.log('Selected result:', song);
+    songName = song[0];
+    songURI = song[1];
+    songArtistName = song[4];
+    artistURI = song[5];
     // Close the overlay after selection
     turnOffSongsSearchOverlay();
     turnOffArtistSection();
@@ -565,10 +608,12 @@ function buildPlaylist(playlistDict) {
     //};
 }
 
+
 function clearPL() {
     playlistDict = {};
     buildPlaylist(playlistDict);
 };
+
 
 function deleteFromPlaylist(trackToDelete) {
     // Iterate through the dictionary and search for the target trackName
@@ -626,11 +671,15 @@ function createPlaylist() {
         return;
     }
     
-    let playlistName = document.getElementById('playlistName').value;
+    let playlistName = window.prompt('Enter a Name for your playlist:');
     if (playlistName === '') {
-        alert('You must enter a name for your Playlist');
-        return;
+        playlistName = 'Generic Playlist';
     }
+    // let playlistName = document.getElementById('playlistName').value;
+    // if (playlistName === '') {
+    //     alert('You must enter a name for your Playlist');
+    //     return;
+    // }
     
     let playlistDesc = window.prompt('Enter a Description for your playlist called ' + playlistName);
     if (playlistDesc === '') {
