@@ -33,7 +33,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    z-index: 1000; /* Make sure it is above other content */
+    z-index: 1000; /* Makes sure it is above other content */
     justify-content: center;
     align-items: center;
     color: #1DB954;
@@ -68,7 +68,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Make sure it sits on top of other content */
+    z-index: 1000; 
 }
 
 .artistSearchPopup {
@@ -98,9 +98,9 @@ body {
 }
 
 .songContainer {
-    display: flex;              /* Use flexbox to align children (image and text) horizontally */
-    align-items: center;        /* Vertically centers the items */
-    margin-bottom: 10px;         /* Adds space between each song item */
+    display: flex;              
+    align-items: center;        
+    margin-bottom: 10px;         
 }
 
 .playSong, .queueSong, .addSong {
@@ -128,11 +128,11 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.7); 
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Make sure it sits on top of other content */
+    z-index: 1000; 
 }
 
 .songsSearchPopup {
@@ -209,7 +209,7 @@ body {
 }
   
 h3 {
-    margin-bottom: 5px;        /* Adds space below the heading */
+    margin-bottom: 5px;        
 }
 
 .searchContainer {
@@ -312,9 +312,9 @@ h3 {
     color: white;
     border: none;
     cursor: pointer;
-    display: flex; /* Use Flexbox to align items */
+    display: flex; 
     justify-content: space-between; 
-    align-items: center; /* Align items vertically */
+    align-items: center; 
     margin-bottom: 1px;
     outline: 1px;
     font-size: 16px;
@@ -333,9 +333,9 @@ h3 {
     color: white;
     border: none;
     cursor: pointer; 
-    display: flex; /* Use Flexbox to align items */
+    display: flex; 
     justify-content: space-between; 
-    align-items: center; /* Align items vertically */
+    align-items: center; 
     margin-bottom: 1px;
     outline: 1px;
     font-size: 16px;
@@ -361,10 +361,10 @@ h3 {
 }
 
 .artistCol3Heading {
-    display: flex; /* Use Flexbox to align items */
+    display: flex; 
     flex-grow: 1;
     justify-content: space-between; 
-    align-items: center; /* Align items vertically */
+    align-items: center; 
     margin-right: 5px;
     margin-bottom: 1px; 
 }
@@ -417,17 +417,16 @@ h3 {
     font-size: 14px;  
 }
 
-/* Remove the dots from the unordered list */
 .album ul {
     list-style-type: none; /* Remove default bullets */
     padding: 0;
 }
 
 .album ul li {
-    display: flex; /* Use Flexbox to align items */
-    justify-content: flex-end; /* Push the track name to the left and button to the right */
-    align-items: center; /* Align items vertically */
-    margin-bottom: 10px; /* Add some space between tracks */
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: center; 
+    margin-bottom: 10px; 
 }
 
 .trackPlayBtn, .trackQueueBtn, .plAddButton {
@@ -452,7 +451,7 @@ h3 {
 .plTrack {
     display: flex;
     justify-content: space-between;
-    align-items: center;  /* Vertically center the items */
+    align-items: center; 
 }
 
 .plTracks {

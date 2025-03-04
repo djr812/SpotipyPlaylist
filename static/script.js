@@ -1,7 +1,23 @@
+// Global Variables
 let playlistDict = {}
 
-setInterval(function () {
-    fetch('/getNewSongPlaying') // Call your Flask route /getNewSongPlaying to get fresh song info
+
+/**
+ * Function Name: updateCurrentlyPlaying
+ * 
+ * Description: Updates the currently playing track information by fetching data
+ *              from Flask using the /getNewSongPlaying route
+ * 
+ * Parameters:
+ *  - none
+ * 
+ * Returns:
+ *  - none
+ * 
+ * Author: David Rogers
+ */
+function updateCurrentlyPlaying() {
+    fetch('/getNewSongPlaying') 
         .then((response) => response.json())
         .then((data) => {
             // Update the page with the new song details
@@ -16,16 +32,35 @@ setInterval(function () {
                 data.deviceName +
                 '</b>';
         });
-}, 5000); // Every 5000 milliseconds (5 seconds)
+}
 
+// Update Currently Playing track information every 5sec
+setInterval(updateCurrentlyPlaying, 5000);
+
+
+/**
+ * Function Name: sendArtist
+ * 
+ * Description: Get artist details from input box (artistName) and
+ *              send them to Flask
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function sendArtist() {
     let artistToSearch = document.getElementById('artistName').value;
 
+    // Turn on 'Searching...' overlay and turn off hidden sections
     turnOnSearchingOverlay();
     turnOffArtistSection();
     turnOffArtistAlbums();
 
-    // Send inputValue to Flask via a POST request using Fetch API
+    // Send artistName to Flask via a POST request to /searchArtists
     fetch('/searchArtists', {
         method: 'POST',
         headers: {
@@ -42,6 +77,21 @@ function sendArtist() {
         })
 };
 
+
+/**
+ * Function Name: showArtistSearchOverlay
+ * 
+ * Description: Build the Artist Search overlay from artist data
+ *              received and turn it ON.
+ * 
+ * Parameters:
+ *  - artists (Object): key(Index):value(Array - 0:Artist Name 1:Artist URI)
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function showArtistSearchOverlay(artists) {
     const artistSearchResultsList = document.getElementById('artistSearchResultsList');
 
@@ -64,7 +114,21 @@ function showArtistSearchOverlay(artists) {
 }
 
 
-// Function to handle selection of a search result
+/**
+ * Function Name: selectArtistResult
+ * 
+ * Description: Extract the artistURI and send to searchByArtistURI
+ *              Turn off Artist Search Overlay
+ * 
+ * Parameters:
+ *  - artistIndex (Integer): Selected index number in Artists object
+ *  - artists (Object): key(Index):value(Array - 0:Artist Name 1:Artist URI) 
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function selectArtistResult(artistIndex, artists) {
 
     console.log('Selected result:', artistIndex);
@@ -76,6 +140,21 @@ function selectArtistResult(artistIndex, artists) {
     searchByArtistURI(artistURI);
 }
 
+
+/**
+ * Function Name: searchByArtistURI
+ * 
+ * Description: Fetch artist details from Flask and update
+ *              page to display.
+ * 
+ * Parameters:
+ *  - artistURI (String): Artist URI GUID
+ *
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 // Function to fetch Artist details from Flask and display
 function searchByArtistURI(artistURI) {
     turnOnSearchingOverlay();
@@ -88,7 +167,7 @@ function searchByArtistURI(artistURI) {
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('Success. Found the Artist');
+            console.log('Success. Found the Artist ' + data.artistName);
 
             // Clear existing content before adding new data
             document.getElementById('artistAlbums').innerHTML = '';
@@ -102,7 +181,34 @@ function searchByArtistURI(artistURI) {
                     ${data.artistGenres.map(genre => `<li>${genre}</li>`).join('')}
                 </ul>
             `;
-                     
+            displayArtistAlbums(data);
+        })
+        .catch((error) => {
+            turnOffSearchingOverlay();
+            console.error('Error:', error);
+        });
+}
+
+/**
+ * Function Name: displayArtistAlbums
+ * 
+ * Description: Display the Albums belonging to the target
+ *              Artist. Include in each Album the Album Art,
+ *              Tracks and Play, Queue and Add buttons for
+ *              each track.
+ * 
+ * Parameters:
+ *  - artistAlbumsDict (Object): Contains an object(albumsDict) within an
+ *      object (artistAlbumsDict) - the internal object holds album track data,
+ *      the external object contains Artist data.
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
+function displayArtistAlbums(artistAlbumsDict) {
+            // Create a container to hold all the Artist's ablums
             const displayElement = document.getElementById('artistAlbums');
 
             // Create a container div to hold all albums
@@ -110,14 +216,14 @@ function searchByArtistURI(artistURI) {
             albumsContainer.classList.add('albums-container'); // Add a class to style the container
 
             // Loop through albumsDict
-            for (const albumKey in data.albumsDict) {
-                if (data.albumsDict.hasOwnProperty(albumKey)) {
+            for (const albumKey in artistAlbumsDict.albumsDict) {
+                if (artistAlbumsDict.albumsDict.hasOwnProperty(albumKey)) {
                     // Create a section for each album
                     const albumsDiv = document.createElement('div');
                     albumsDiv.classList.add('album'); // Add a class for each album item
 
                     // Access the album dictionary using albumKey
-                    const albumData = data.albumsDict[albumKey];
+                    const albumData = artistAlbumsDict.albumsDict[albumKey];
 
                     // Display the album name as a heading
                     albumsDiv.innerHTML = `<h3>${albumData.albumName}</h3>`; // Display albumName as a heading
@@ -221,14 +327,26 @@ function searchByArtistURI(artistURI) {
             turnOffSearchingOverlay();
             turnOnArtistSection();
             turnOnArtistAlbums();
-        })
-        .catch((error) => {
-            turnOffSearchingOverlay();
-            console.error('Error:', error);
-        });
+        
 }
 
 
+/**
+ * Function Name: addButtonPressed
+ * 
+ * Description: When ADD button is presses, send request to Flask
+ *              route /getTrackData along with TrackURI and return 
+ *              updated playlistDict playlistDict. Rebuild Playlist 
+ *              based on new version of playlistDict.
+ * 
+ * Parameters:
+ *  - trackID (String): track URI
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function addButtonPressed(trackID){
     // When clicked, send the track ID to Flask
     console.log('Track ID to add:', trackID);
@@ -262,6 +380,21 @@ function addButtonPressed(trackID){
 }
 
 
+/**
+ * Function Name: playButtonPressed
+ * 
+ * Description: When PLAY button is pressed, send TrackID to 
+ *              Flask route /playTrack and receive confirmation
+ *              that track is being played to active device
+ * 
+ * Parameters:
+ *  - trackID (String): Track URI GUID
+ * 
+ * Returns:
+ *  - None 
+ * 
+ * Author: David Rogers
+ */
 function playButtonPressed(trackID){
     console.log('Track ID to play:', trackID);
                                     
@@ -284,6 +417,21 @@ function playButtonPressed(trackID){
 }
 
 
+/**
+ * Function Name: queueButtonPressed
+ * 
+ * Description: Send TrackID to Flask route /queueTrack to 
+ *              request Track be queued to play on active
+ *              device. 
+ * 
+ * Parameters:
+ *  - trackID (String): Track URI GUID
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function queueButtonPressed(trackID){
     console.log('Track ID to queue:', trackID);
                                     
@@ -306,6 +454,21 @@ function queueButtonPressed(trackID){
 }
 
 
+/**
+ * Function Name: sendSong
+ * 
+ * Description: Send the input value of songName to the Flask
+ *              /searchSongs route, turn off the hidden 
+ *              sections and turn on the 'Searching...' overlay
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function sendSong() {
     let songToSearch = document.getElementById('songName').value;
     turnOffArtistSection();
@@ -330,13 +493,29 @@ function sendSong() {
 };
 
 
+/**
+ * Function Name: showSongsSearchOverlay
+ * 
+ * Description: Take the songs object and build the SongsSearchResultsList
+ *              and display for the user to select a song from.
+ * 
+ * Parameters:
+ *  - songs (Object): contains song Name, URI, its Album, song Artist name
+ *              and the Album Image
+ * 
+ * Returns:
+ *  - None
+ * 
+ * 
+ * Author: David Rogers
+ */
 function showSongsSearchOverlay(songs) {
     const songsSearchResultsList = document.getElementById('songsSearchResultsList');
 
     // Clear previous results
     songsSearchResultsList.innerHTML = '';
 
-    // Create a list item for each result
+    // Create an Array item for each result
     songIndex = 1;
     for (const [index, song] of Object.entries(songs)) {
         const li = document.createElement('li');
@@ -345,13 +524,6 @@ function showSongsSearchOverlay(songs) {
         const playButton = document.createElement('button');
         const queueButton = document.createElement('button');
         const addButton = document.createElement('button');
-    
-        // songName = songs[songIndex][0];
-        // songURI = songs[songIndex][1];
-        // songAlbumName = songs[songIndex][2];
-        // songArtistName = songs[songIndex][4];
-        // songAlbumImage = songs[songIndex][3];
-        // songArtistURI = songs[songIndex][5];
         
         const songName = song[0];
         const songURI = song[1];
@@ -400,7 +572,21 @@ function showSongsSearchOverlay(songs) {
 }
 
 
-// Function to handle selection of a search result
+/**
+ * Function Name: selectSongResult
+ * 
+ * Description: Extract data from received 'song' and send it
+ *              to searchBySongURI
+ * 
+ * Parameters:
+ *  - song (Array): Song array containing song Name, URI, Artist
+ *              name and Artist URI. 
+ * 
+ * Returns:
+ *  - None 
+ * 
+ * Author: David Rogers
+ */
 function selectSongResult(song) {
 
     console.log('Selected result:', song);
@@ -408,7 +594,9 @@ function selectSongResult(song) {
     songURI = song[1];
     songArtistName = song[4];
     artistURI = song[5];
-    // Close the overlay after selection
+    
+    // Turn off the Search List Overlay and turn on
+    // 'Searching...' overlay.
     turnOffSongsSearchOverlay();
     turnOffArtistSection();
     turnOffArtistAlbums();
@@ -417,6 +605,24 @@ function selectSongResult(song) {
 }
 
 
+/**
+ * Function Name: searchBySongURI
+ * 
+ * Description: Send details to Flask route /searchArtistByURI
+ *              and receive an updated playlistDict. Rebuild
+ *              the playlist based on updated playlistDict.
+ * 
+ * Parameters:
+ *  - songName (String): Name of selected song
+ *  - songArtistName (String): Name of song's artist
+ *  - songURI (String): Songs URI GUID
+ *  - artistURI (String): Artists URI GUID
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 // Function to fetch Artist details from Flask and display
 function searchBySongURI(songName, songArtistName, songURI, artistURI) {
     
@@ -462,19 +668,60 @@ function searchBySongURI(songName, songArtistName, songURI, artistURI) {
 };
 
 
+/**
+ * Function Name: closeArtistSearchOverlay
+ * 
+ * Description: Turn off the 'Searching...' overlay and the
+ *              ArtistSearch overlay.
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function closeArtistSearchOverlay() {
     turnOffArtistSearchOverlay();
     turnOffSearchingOverlay();
 };
 
 
+/**
+ * Function Name: closeSongsSearchOverlay
+ * 
+ * Description: Turn off the Songs Search overlay and the
+ *              Searching... overlay
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function closeSongsSearchOverlay() {
     turnOffSongsSearchOverlay();
     turnOffSearchingOverlay();
 };
 
 
-// Function to turn ON hidden artistAlbums
+/**
+ * Function Name: turnOnArtistAlbums
+ * 
+ * Description: Un-hide the ArtistAlbums section of the
+ *              webpage. 
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOnArtistAlbums() {
     const artistAlbums = document.getElementById("artistAlbums");
     artistAlbums.style.display = "block";
@@ -482,7 +729,19 @@ function turnOnArtistAlbums() {
 };
 
 
-// Function to turn OFF hidden artistSection
+/**
+ * Function Name: turnOffArtistAlbums
+ * 
+ * Description: Hide the ArtistAlbums section of the page.
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOffArtistAlbums() {
     const artistAlbums = document.getElementById("artistAlbums");
     artistAlbums.style.display = "none";
@@ -490,7 +749,19 @@ function turnOffArtistAlbums() {
 };
 
 
-// Function to turn ON hidden artistSection
+/**
+ * Function Name: turnOnArtistSection
+ * 
+ * Description: Un-hide the Artist Section of the web page.
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOnArtistSection() {
     const artistSection = document.getElementById("artist");
     artistSection.style.display = "block";
@@ -498,7 +769,19 @@ function turnOnArtistSection() {
 };
 
 
-// Function to turn OFF hidden artistSection
+/**
+ * Function Name: turnOffArtistSection
+ * 
+ * Description: Hide the Artist section of the web page.
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOffArtistSection() {
     const artistSection = document.getElementById("artist");
     artistSection.style.display = "none";
@@ -506,7 +789,19 @@ function turnOffArtistSection() {
 };
 
 
-// Function to turn OFF searchingOverlay
+/**
+ * Function Name: turnOnSearchingOverlay
+ * 
+ * Description: Turn ON the Searching... overlay
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOnSearchingOverlay() {
     const searchingOverlay = document.getElementById("searchingOverlay");
     searchingOverlay.style.display = "flex";
@@ -514,7 +809,19 @@ function turnOnSearchingOverlay() {
 };
 
 
-// Function to turn OFF searchingOverlay
+/**
+ * Function Name: turnOffSearchingOverlay
+ * 
+ * Description: Turn off the Searching.. overlay.
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOffSearchingOverlay() {
     const searchingOverlay = document.getElementById("searchingOverlay");
     searchingOverlay.style.display = "none";
@@ -522,7 +829,20 @@ function turnOffSearchingOverlay() {
 };
 
 
-// Function to turn ON SongsSearchOverlay
+/**
+ * Function Name: turnOnSongsSearchOverlay
+ * 
+ * Description: Turn ON the Songs Search Overlay so users 
+ *              can make selection.
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOnSongsSearchOverlay() {
     const songsSearchOverlay = document.getElementById('songsSearchOverlay');
     songsSearchOverlay.style.display = 'flex';
@@ -530,6 +850,20 @@ function turnOnSongsSearchOverlay() {
 };
 
 
+/**
+ * Function Name: turnOffSongsSearchOverlay
+ * 
+ * Description: Turn OFF the Songs Search Overlay after users
+ *              have made their selection
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 // Function to turn OFF SongsSearchOverlay
 function turnOffSongsSearchOverlay() {
     const songsSearchOverlay = document.getElementById('songsSearchOverlay');
@@ -538,7 +872,20 @@ function turnOffSongsSearchOverlay() {
 };
 
 
-// Function to turn ON artistSearchOverlay
+/**
+ * Function Name: turnOnArtistSearchOverlay
+ * 
+ * Description: Turn ON the Artists Search Overlay so users
+ *              can make their selection.
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOnArtistSearchOverlay() {
     const artistSearchOverlay = document.getElementById('artistSearchOverlay');
     artistSearchOverlay.style.display = 'flex';
@@ -546,7 +893,20 @@ function turnOnArtistSearchOverlay() {
 };
 
 
-// Function to turn OFF artistSearchOverlay
+/**
+ * Function Name: turnOffArtistSearchOverlay
+ * 
+ * Description: Turn OFF the Artist Search Overlay after users
+ *              have made their selection
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function turnOffArtistSearchOverlay() {
     const artistSearchOverlay = document.getElementById('artistSearchOverlay');
     artistSearchOverlay.style.display = 'none';
@@ -554,6 +914,22 @@ function turnOffArtistSearchOverlay() {
 };
 
 
+/**
+ * Function Name: buildPlayList
+ * 
+ * Description: Use the received playlistDict to build a new
+ *              version of the Playlist Builder section of the
+ *              webpage. Create a Delete button for each track
+ *              added to the Playlist. 
+ * 
+ * Parameters:
+ *  - playlistDict (Object): Object containing key(Index):value(array)
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function buildPlaylist(playlistDict) {
     // Get the div with the class 'playlist'
     const playlistSection = document.getElementById('playlist');
@@ -561,7 +937,7 @@ function buildPlaylist(playlistDict) {
     // Clear any existing content in the playlist div
     playlistSection.innerHTML = '';
 
-    // Loop through the received object (assuming it's an object where the key is 'id' and the value is an array of tracks)
+    // Loop through the received object 
     for (const id in playlistDict) {
         if (playlistDict.hasOwnProperty(id)) {
             // Create a new div to hold the track names for this id
@@ -603,18 +979,45 @@ function buildPlaylist(playlistDict) {
     
     console.log(Object.entries(playlistDict))
     
-    //for (const id in playlistDict) {
-    //    console.dir('PlaylistDict: Index= ' + id + ' ' + playlistDict[id]);
-    //};
 }
 
 
+/**
+ * Function Name: clearPL
+ * 
+ * Description: Reset the current Playlist and run the 
+ *              buildPlaylist command to clear the section
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function clearPL() {
     playlistDict = {};
     buildPlaylist(playlistDict);
 };
 
 
+/**
+ * Function Name: deleteFromPlaylist
+ * 
+ * Description: Receive a Track Name and delete its track 
+ *              information from the Playlist. Rebuild the
+ *              remaining playlist info. Renumber the index
+ *              keys for the remaining track items
+ * 
+ * Parameters:
+ *  - trackToDelete (String): Name of track to be deleted
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function deleteFromPlaylist(trackToDelete) {
     // Iterate through the dictionary and search for the target trackName
     for (const key in playlistDict) {
@@ -645,12 +1048,28 @@ function deleteFromPlaylist(trackToDelete) {
     };
     
     // rebuild index of playlistDict
-
-
     buildPlaylist(playlistDict);
 };
 
 
+/**
+ * Function Name: setNewKeyForValue
+ * 
+ * Description: When key is found out-of-order, e.g. 1,2,4,5
+ *              then re-number remaining items, e.g. 1,2,3,4
+ * 
+ * Parameters:
+ *  - obj (Object): The Object to be re-indexed
+ *  - oldValue (Integer): The current value of the index to be
+ *              renumbered.
+ *  - newValue (Integer): The new value to be give to the object
+ *              element to be re-indexed.
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function setNewKeyForValue(obj, oldValue, newKey) {
     for (let [key, value] of Object.entries(obj)) {
       if (value === oldValue) {
@@ -662,6 +1081,23 @@ function setNewKeyForValue(obj, oldValue, newKey) {
   }
 
 
+  /**
+ * Function Name: createPlaylist
+ * 
+ * Description: Prompt the user for a Playlist Name and 
+ *              description and then pass current contents
+ *              of playlistDict with the chosen Name and 
+ *              description to Flask route /createPlaylist
+ *              for processiong
+ * 
+ * Parameters:
+ *  - None
+ * 
+ * Returns:
+ *  - None
+ * 
+ * Author: David Rogers
+ */
 function createPlaylist() {
     let playlist = {};
     let uris = [];
@@ -675,11 +1111,6 @@ function createPlaylist() {
     if (playlistName === '') {
         playlistName = 'Generic Playlist';
     }
-    // let playlistName = document.getElementById('playlistName').value;
-    // if (playlistName === '') {
-    //     alert('You must enter a name for your Playlist');
-    //     return;
-    // }
     
     let playlistDesc = window.prompt('Enter a Description for your playlist called ' + playlistName);
     if (playlistDesc === '') {
