@@ -31,6 +31,9 @@ function updateCurrentlyPlaying() {
                 '</b> called <b>' +
                 data.deviceName +
                 '</b>';
+        })
+        .catch((error) => {
+            console.error('Error updating "Currently Playing":', error);
         });
 }
 
@@ -73,8 +76,11 @@ function sendArtist() {
             console.log('Success. Found a set of Artists');
             document.getElementById('artistName').value = '';
             showArtistSearchOverlay(data.artistsDict);
-
         })
+        .catch((error) => {
+            turnOffSearchingOverlay();
+            console.error('Error searching for Artist:', error);
+        });
 };
 
 
@@ -155,7 +161,6 @@ function selectArtistResult(artistIndex, artists) {
  * 
  * Author: David Rogers
  */
-// Function to fetch Artist details from Flask and display
 function searchByArtistURI(artistURI) {
     turnOnSearchingOverlay();
     fetch('/searchArtistByURI', {
@@ -185,7 +190,7 @@ function searchByArtistURI(artistURI) {
         })
         .catch((error) => {
             turnOffSearchingOverlay();
-            console.error('Error:', error);
+            console.error('Error searching for Artist:', error);
         });
 }
 
@@ -349,7 +354,7 @@ function displayArtistAlbums(artistAlbumsDict) {
  */
 function addButtonPressed(trackID){
     // When clicked, send the track ID to Flask
-    console.log('Track ID to add:', trackID);
+    // console.log('Track ID to add:', trackID);
     
     // Send trackID to Flask via a POST request using Fetch API
     fetch('/getTrackData', {
@@ -361,7 +366,7 @@ function addButtonPressed(trackID){
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('Track info received:', data);
+            //console.log('Track info received:', data);
             
             // Use 'data' to start building playlistDict object
             let playlistIndex;
@@ -371,8 +376,9 @@ function addButtonPressed(trackID){
                 playlistIndex = Object.keys(playlistDict).length + 1;
             }
             playlistDict[playlistIndex] = data.playlistItem;
-            console.log('Add to Playlist: Index='+ playlistIndex + " " + playlistDict[playlistIndex]);  
+            //console.log('Add to Playlist: Index='+ playlistIndex + " " + playlistDict[playlistIndex]);  
             buildPlaylist(playlistDict);
+            console.log('Success. Added track "' + data.playlistItem[1] + '" to the playlist')
         })
         .catch((error) => {
             console.error('Error adding track:', error);
@@ -396,8 +402,7 @@ function addButtonPressed(trackID){
  * Author: David Rogers
  */
 function playButtonPressed(trackID){
-    console.log('Track ID to play:', trackID);
-                                    
+                                        
     // Send trackID to Flask via a POST request using Fetch API
     fetch('/playTrack', {
         method: 'POST',
@@ -408,11 +413,10 @@ function playButtonPressed(trackID){
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('Track play info received:', data);
-            
+            console.log('Success. Playing "' + data.trackName + '" by ' + data.trackArtist);           
         })
         .catch((error) => {
-            console.error('Error adding track:', error);
+            console.error('Error playing track:', error);
     });
 }
 
@@ -433,9 +437,7 @@ function playButtonPressed(trackID){
  * Author: David Rogers
  */
 function queueButtonPressed(trackID){
-    console.log('Track ID to queue:', trackID);
-                                    
-    // Send trackID to Flask via a POST request using Fetch API
+    
     fetch('/queueTrack', {
         method: 'POST',
         headers: {
@@ -445,8 +447,7 @@ function queueButtonPressed(trackID){
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('Track queue info received:', data);
-            
+            console.log('Success. Queueing "' + data.trackName + '" by ' + data.trackArtist);    
         })
         .catch((error) => {
             console.error('Error queueing track:', error);
@@ -490,6 +491,10 @@ function sendSong() {
             showSongsSearchOverlay(data.songsDict);
 
         })
+        .catch((error) => {
+            turnOffSearchingOverlay();
+            console.error('Error searching for Song:', error);
+        });
 };
 
 
@@ -505,7 +510,6 @@ function sendSong() {
  * 
  * Returns:
  *  - None
- * 
  * 
  * Author: David Rogers
  */
@@ -544,7 +548,6 @@ function showSongsSearchOverlay(songs) {
         addButton.classList.add('addSong');
         addButton.onclick = () => selectSongResult(song);
 
-        console.log(songURI);
         playButton.type = 'button';
         playButton.textContent = 'Play';
         playButton.classList.add('playSong');
@@ -589,7 +592,7 @@ function showSongsSearchOverlay(songs) {
  */
 function selectSongResult(song) {
 
-    console.log('Selected result:', song);
+    //console.log('Selected result:', song);
     songName = song[0];
     songURI = song[1];
     songArtistName = song[4];
@@ -660,11 +663,14 @@ function searchBySongURI(songName, songArtistName, songURI, artistURI) {
             } else {
                 playlistIndex = Object.keys(playlistDict).length + 1;
             }
-            playlistDict[playlistIndex] = [songURI, songName, songArtistName]; 
-            console.log('Add to Playlist: Index='+ playlistIndex + " " + playlistDict[playlistIndex]);   
+            playlistDict[playlistIndex] = [songURI, songName, songArtistName];  
             buildPlaylist(playlistDict);
+            console.log('Success. Added "' + songName + '" to Playlist.')
+        })
+        .catch((error) => {
+            turnOffSearchingOverlay();
+            console.error('Error searching for song by URI:', error);
         });
-    
 };
 
 
@@ -977,7 +983,7 @@ function buildPlaylist(playlistDict) {
         }
     }
     
-    console.log(Object.entries(playlistDict))
+    //console.log(Object.entries(playlistDict))
     
 }
 
@@ -1088,7 +1094,7 @@ function setNewKeyForValue(obj, oldValue, newKey) {
  *              description and then pass current contents
  *              of playlistDict with the chosen Name and 
  *              description to Flask route /createPlaylist
- *              for processiong
+ *              for processing
  * 
  * Parameters:
  *  - None
@@ -1124,7 +1130,6 @@ function createPlaylist() {
         uris.push(track[0]);
     } 
     playlist.uris = uris;
-    console.log(playlist);
     
     // Send playlist to Flask via a POST request using Fetch API
     fetch('/createPlaylist', {
@@ -1136,7 +1141,7 @@ function createPlaylist() {
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('Playlist info received:', data);
+            console.log('Success: Playlist '+ playlistName +' created.');
             alert('Playlist successfully created!');
             clearPL();
         })

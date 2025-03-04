@@ -87,35 +87,47 @@ def getNewSongPlaying():
     Returns:    Return jsonified data regarding currently
                 playing track on device
     """
-    # Get current track information
-    songPlaying = {}
-    track = sp.current_user_playing_track()
-    devices = sp.devices()
-    if track != None:
-        playingArtist = track["item"]["artists"][0]["name"]
-        playingTrack = track["item"]["name"]
-        deviceName = devices["devices"][0]["name"]
-        deviceType = devices["devices"][0]["type"]
-    else:
-        playingArtist = "nobody"
-        playingTrack = "nothin'"
-        deviceName = "nada"
-        deviceType = "unknown device"
+    try:
+        # Get current track information
+        songPlaying = {}
 
-    songPlaying = {
-        "playingArtist": playingArtist,
-        "playingTrack": playingTrack,
-        "deviceName": deviceName,
-        "deviceType": deviceType,
-    }
-    return jsonify(songPlaying)
+        track = sp.current_user_playing_track()
+        devices = sp.devices()
+
+        if track is not None:
+            playingArtist = track["item"]["artists"][0]["name"]
+            playingTrack = track["item"]["name"]
+            deviceName = devices["devices"][0]["name"]
+            deviceType = devices["devices"][0]["type"]
+        else:
+            playingArtist = "nobody"
+            playingTrack = "nothin'"
+            deviceName = "nada"
+            deviceType = "unknown device"
+
+        songPlaying = {
+            "playingArtist": playingArtist,
+            "playingTrack": playingTrack,
+            "deviceName": deviceName,
+            "deviceType": deviceType,
+        }
+
+        return jsonify(songPlaying)
+
+    except Exception as e:
+        # In case of any error, return the error message as JSON
+        error_details = {
+            "error": str(e),
+            "message": "An error occurred while fetching current song playing data.",
+        }
+        return jsonify(error_details), 500
 
 
 @app.route("/searchArtists", methods=["POST"])
 def searchArtists():
     """
-    Name:       searchArtists       
-    Desc:       Receive Artist Name or part of Name and send to 
+    Name:       searchArtists
+    Desc:       Receive Artist Name or part of Name and send to
                 Spotipy API search function. Build the artistsDict
                 dictionary with search results and return to JS
     Params:     input(POST)
@@ -153,7 +165,7 @@ def searchArtists():
 @app.route("/searchArtistByURI", methods=["POST"])
 def searchArtistByURI():
     """
-    Name:       searchArtistByURI       
+    Name:       searchArtistByURI
     Desc:       Receive artistURI input and send to Spotipy Artist function
                 to return artist information. Use artistURI to return their
                 associated Albums and Tracks. Format all data and return to JS
@@ -237,11 +249,11 @@ def searchArtistByURI():
 @app.route("/searchSongs", methods=["POST"])
 def searchSongs():
     """
-    Name:       searchSongs       
+    Name:       searchSongs
     Desc:       Receive input (song Name) and send to Spotipy
                 search function to receive top 5 matches. Process
                 returned songs into Arrays of songDetails and
-                append these to a dictionary called songsDict. 
+                append these to a dictionary called songsDict.
     Params:     input(POST)
     Returns:    songsDict (Dictionary)
     """
@@ -288,9 +300,9 @@ def searchSongs():
 @app.route("/getTrackData", methods=["POST"])
 def getTrackData():
     """
-    Name:       getTrackData       
+    Name:       getTrackData
     Desc:       Receives a trackID (URI) and returns a playlistItem which
-                is an array containing the track URI, track name and 
+                is an array containing the track URI, track name and
                 the artist.
     Params:     data(POST)
     Returns:    playlistItem (Array)
@@ -325,8 +337,8 @@ def getTrackData():
 @app.route("/createPlaylist", methods=["POST"])
 def createPlaylist():
     """
-    Name:       createPlaylist       
-    Desc:       Receive Playlist Name, Desc, URI's and UserID and 
+    Name:       createPlaylist
+    Desc:       Receive Playlist Name, Desc, URI's and UserID and
                 then create a Playlist container and Fill the container
                 with received URI's
     Params:     playlist(Dictionary)
@@ -360,19 +372,19 @@ def createPlaylist():
 @app.route("/playTrack", methods=["POST"])
 def playTrack():
     """
-    Name:       playTrack       
+    Name:       playTrack
     Desc:       Receives a track ID (URI), starts play on the active
                 device or transfers to a non-active device and forces
-                playback. Returns a trackID (URI) and confirmation 
+                playback. Returns a trackID (URI) and confirmation
                 message.
     Params:     data(POST)
     Returns:    trackID (String)
     """
     data = request.get_json()
     trackID = data.get("trackID")
+    trackName, trackArtist = getTrackName(trackID)
     # Get currently playing device
     devices = sp.devices()
-    print(devices["devices"][0]["id"])
     if not devices["devices"][0]["is_active"]:
         deviceID = devices["devices"][0]["id"]
         sp.transfer_playback(deviceID, force_play=True)
@@ -383,7 +395,17 @@ def playTrack():
     devices = sp.devices()
 
     if data and devices["devices"][0]["is_active"]:
-        return jsonify({"message": "Playing track ", "trackID": trackID}), 200
+        return (
+            jsonify(
+                {
+                    "message": "Playing track ",
+                    "trackID": trackID,
+                    "trackName": trackName,
+                    "trackArtist": trackArtist,
+                }
+            ),
+            200,
+        )
     else:
         return jsonify({"message": "Unable to play Track"}), 400
 
@@ -391,17 +413,17 @@ def playTrack():
 @app.route("/queueTrack", methods=["POST"])
 def queueTrack():
     """
-    Name:       queueTrack       
+    Name:       queueTrack
     Desc:       Receives a track ID (URI) and checks for a currently
                 active and playing device. If none are present then
-                force play on the next available device, otherwise 
+                force play on the next available device, otherwise
                 queue the track on the active device.
     Params:     data(POST)
     Returns:    trackID (String)
     """
     data = request.get_json()
     trackID = data.get("trackID")
-    print(trackID)
+    trackName, trackArtist = getTrackName(trackID)
     # Get currently playing device
     devices = sp.devices()
     # print(devices)
@@ -412,12 +434,22 @@ def queueTrack():
         sp.start_playback(uris=[trackID])
     else:
         sp.add_to_queue(trackID)
-        return jsonify({"message": "Queueing track ", "trackID": trackID}), 200
+        return (
+            jsonify(
+                {
+                    "message": "Queueing track ",
+                    "trackID": trackID,
+                    "trackName": trackName,
+                    "trackArtist": trackArtist,
+                }
+            ),
+            200,
+        )
 
 
 def createPlaylistContainer(playlistName, playlistDesc, userID):
     """
-    Name:       createPlaylistContainer       
+    Name:       createPlaylistContainer
     Desc:       Received a playlist Name, Desc and the user's ID
                 and creates a container for the playlist ready for
                 addition of tracks
@@ -436,9 +468,9 @@ def createPlaylistContainer(playlistName, playlistDesc, userID):
 
 def fillPlaylistContainer(playlistID, uris, userID):
     """
-    Name:       fillPlaylistContainer       
+    Name:       fillPlaylistContainer
     Desc:       Takes the user's ID and playlist ID and
-                an array of URI's (Track ID's) and adds 
+                an array of URI's (Track ID's) and adds
                 them to the identified playlist.
     Params:     userID (String)
                 playlistID (String)
@@ -452,7 +484,7 @@ def fillPlaylistContainer(playlistID, uris, userID):
 
 def getTrackName(plTrackID):
     """
-    Name:       getTrackName       
+    Name:       getTrackName
     Desc:       Receives a playlist TrackID (URI) and
                 returns its Track Name and Artist
     Params:     plTrackID (String)
