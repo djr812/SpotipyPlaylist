@@ -13,6 +13,23 @@ body {
     padding: 0;
 }
 
+.footer {
+    position: fixed;        /* Fixed positioning at the bottom */
+    bottom: 0;              /* Stick it to the bottom of the page */
+    left: 0;                /* Align it to the left edge */
+    width: 100%;            /* Make it full width */
+    height: 80px;          /* Set the height to 100px */
+    background-color: black; /* Background color (optional) */
+    display: flex;          /* Use flexbox to center content */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center;    /* Center the content vertically */
+}
+
+.footer, img {
+    max-height: 80%;        /* Ensure the image is smaller than the footer */
+    object-fit: contain;    /* Ensure the image scales properly inside the footer */
+}
+
 .ticker {
     background-color: black;
     color: #1DB954;

@@ -382,6 +382,7 @@ def createPlaylist():
     data = request.get_json()
     playlist = data.get("playlist")
 
+    user = sp.current_user()
     playlistName = playlist.get("name")
     playlistDesc = playlist.get("desc")
     uris = playlist.get("uris")
