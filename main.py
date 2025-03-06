@@ -1,14 +1,14 @@
 import requests
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
 import json
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 
-load_dotenv()
+#load_dotenv()
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 application = app
@@ -18,43 +18,19 @@ client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 scope = "user-library-read,user-read-playback-state,user-modify-playback-state,playlist-modify-public"
 
-sp = spotipy.Spotify(
-    auth_manager=SpotifyOAuth(
+sp_oauth = SpotifyOAuth(
         client_id=client_id,
         client_secret=client_secret,
-        redirect_uri="http://localhost:5000",
-        scope=scope,
+        redirect_uri="http://127.0.0.1:5000/callback",
+        scope=scope
     )
-)
 
-user = sp.current_user()
-
-# print(json.dumps(VARIABLE, sort_keys=True, indent=4))
-
-# Get currently playing device
-devices = sp.devices()
-deviceID = devices["devices"][0]["id"]
-
-# Get current track information
-track = sp.current_user_playing_track()
-if track != None:
-    playingArtist = track["item"]["artists"][0]["name"]
-    playingTrack = track["item"]["name"]
-    deviceName = devices["devices"][0]["name"]
-    deviceType = devices["devices"][0]["type"]
-else:
-    playingArtist = "nobody"
-    playingTrack = "nothing"
-    deviceName = "nada"
-    deviceType = "unknown device"
-
-displayName = user["display_name"]
-followers = user["followers"]["total"]
-
-# Functionality to create and add items to playlist
 
 # Initialize an empty dictionary to hold playlist track IDs
 playlistDict = {}
+# Initialize Authorization tokens
+code = ""
+sp = ""
 
 
 @app.route("/")
@@ -66,6 +42,40 @@ def index():
     Params:     None
     Returns:    render_template with attached data
     """
+    global code
+    global sp
+    if not code:
+        # Get the authorization URL
+        auth_url = sp_oauth.get_authorize_url()
+
+        # Redirect the user to Spotify's authorization page
+        return redirect(auth_url)
+
+    user = sp.current_user()
+
+    # print(json.dumps(VARIABLE, sort_keys=True, indent=4))
+
+    # Get currently playing device
+    devices = sp.devices()
+    deviceID = devices["devices"][0]["id"]
+
+    # Get current track information
+    track = sp.current_user_playing_track()
+    if track != None:
+        playingArtist = track["item"]["artists"][0]["name"]
+        playingTrack = track["item"]["name"]
+        deviceName = devices["devices"][0]["name"]
+        deviceType = devices["devices"][0]["type"]
+    else:
+        playingArtist = "nobody"
+        playingTrack = "nothing"
+        deviceName = "nada"
+        deviceType = "unknown device"
+
+    displayName = user["display_name"]
+    followers = user["followers"]["total"]
+
+
     return render_template(
         "index.html",
         displayName=displayName,
@@ -73,8 +83,32 @@ def index():
         playingArtist=playingArtist,
         playingTrack=playingTrack,
         deviceName=deviceName,
-        deviceType=deviceType,
+        deviceType=deviceType
     )
+
+
+@app.route('/callback')
+def callback():
+    global code
+    global sp
+    # Get the authorization code from the URL query parameter
+    
+    code = request.args.get('code')
+
+    if not code:
+        return "Error: No authorization code found", 400
+
+    # Use the code to get an access token
+    token_info = sp_oauth.get_access_token(code)
+
+    if not token_info:
+        return "Error: Unable to get access token", 400
+
+    # Now you have access to the token, and you can use the Spotify API
+    access_token = token_info['access_token']
+    sp = spotipy.Spotify(auth=access_token)
+
+    return redirect(url_for('index'))
 
 
 @app.route("/getNewSongPlaying")
