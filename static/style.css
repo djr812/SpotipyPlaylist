@@ -452,6 +452,22 @@ h3 {
     margin-bottom: 1px; 
 }
 
+.deleteBtn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    outline: 1px;
+    font-size: 16px;
+    border-radius: 40px;
+}
+
+.deleteBtn:hover {
+    background-color: darkred;
+}
+
 /* =====================
 9. ALBUMS SECTION
 ===================== */
@@ -533,21 +549,6 @@ h3 {
     margin-bottom: 1px;
 }
 
-.deleteBtn {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: red;
-    color: white;
-    border: none;
-    cursor: pointer;
-    outline: 1px;
-    font-size: 16px;
-    border-radius: 40px;
-}
-
-.deleteBtn:hover {
-    background-color: darkred;
-}
 
 /* =====================
    MOBILE DESIGN SECTION
@@ -559,13 +560,13 @@ h3 {
     ===================== */
 
     .searchSection {
-        flex-direction: column; /* Stack the search boxes vertically on mobile */
-        align-items: stretch;   /* Stretch them to fill the available width */
+        flex-direction: column; 
+        align-items: stretch;   
     }
 
     .songSearch, .artistSearch {
-        width: 90%; /* Make the search boxes take more space on mobile */
-        margin-bottom: 20px; /* Add spacing between the stacked boxes */
+        width: 90%; 
+        margin-bottom: 20px; 
     }
 
     /* =====================
@@ -573,32 +574,32 @@ h3 {
     ===================== */
 
     .artistColumns {
-        grid-template-columns: 1fr;  /* Only one column in the grid */
+        grid-template-columns: 1fr;  
         display: flex;
-        flex-direction: column;  /* Stack the artist info and playlist vertically */
-        height: auto;  /* Adjust height for stacked layout */
-        width: 100%;  /* Make the columns take up full width */
+        flex-direction: column;  
+        height: auto;  
+        width: 100%; 
     }
 
     .artistTopContainer {
         display: flex;
         flex-direction: column;
-        width: 100%;  /* Make sure the container spans the full width */
-        min-width: 0;  /* Reset min-width to avoid overflow */
-        gap: 20px;  /* Add gap between the sections */
+        width: 100%;  
+        min-width: 0;  
+        gap: 20px;  
     }
 
     .artistImage, .artistInfo {
-        height: auto; /* Let elements auto-size based on content */
-        width: 95%; /* Ensure the images and info boxes take up full width */
-        max-width: 100%; /* Prevent overflow */
-        box-sizing: border-box; /* Include padding in width calculation */
+        height: auto; 
+        width: 95%; 
+        max-width: 100%; 
+        box-sizing: border-box; 
         margin-left: 10px;
     }
     
     /* Adjusting the heading size */
     .artistCol1Heading {
-        font-size: 1.5em; /* Slightly smaller font size for mobile */
+        font-size: 1.5em; 
     }
     
     /* ==========================
@@ -606,19 +607,18 @@ h3 {
     ========================= */
 
     .artistDetails {
-        flex-direction: column; /* Stack the details vertically on mobile */
+        flex-direction: column; 
     }
     
-    /* Making the buttons more responsive */
     .clearPlaylistBtn, .createPlaylistBtn {
-        width: 100%; /* Make buttons full-width on smaller screens */
-        padding: 10px; /* Make buttons bigger for easier tapping */
+        width: 100%; 
+        padding: 10px; 
         margin-bottom: 10px;
     }
 
     .artistSection {
         display: flex;
-        flex-direction: column;  /* Stack content vertically */
+        flex-direction: column;  
         align-items: center;
         gap: 20px;
     }
@@ -628,125 +628,24 @@ h3 {
     ===================== */
 
     #playlist {
-        margin-top: 20px;  /* Add space between buttons and playlist on mobile */
+        margin-top: 20px;  
     }
 
     .createPlaylistBtn, .clearPlaylistBtn {
-        width: 100%;  /* Ensure buttons are full width on mobile */
+        width: 100%;  
         padding: 10px;
     }
 
     .artistBottomContainer {
-        width: 90%;  /* Full width for the bottom container */
+        width: 90%;  
     }
 
-    /* Move the playlist buttons above the playlist when on mobile */
     .artistHeading:nth-child(3) {
         display: flex;
         flex-direction: column;
         gap: 10px;
         width: 100%;
         text-align: center;
-    }
-
-    /* ==========================
-    5. (M) ALBUMS SECTION
-    ========================= */
-    .albums-container {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);  /* 1 column for albums on mobile */
-        gap: 20px;  
-        padding: 20px;  
-    }
-
-    /* =====================
-    10. (M) TRACKS SECTION
-    ===================== */
-
-    .trackPlayBtn, .trackQueueBtn, .plAddButton {
-        margin-left: 10px;
-        padding: 10px 20px; /* Larger buttons */
-        font-size: 18px;    /* Larger text */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        width: auto; /* Auto width, so buttons don't stretch too much */
-        display: inline-block; /* Buttons will be in a row */
-        margin-bottom: 10px;
-    }
-
-    /* Add hover effect for buttons */
-    .plAddButton:hover, .trackQueueBtn:hover, .trackPlayBtn:hover {
-        background-color: #45a049; /* Darker green when hovered */
-    }
-
-    .album {
-        display: flex;
-        flex-direction: column;  /* Stack content vertically */
-        justify-content: space-between; /* Spread out the elements */
-        border: 1px solid #ddd;  
-        padding: 10px;
-        text-align: center;
-        background-color: #f9f9f9; 
-        color: black;
-        border-radius: 8px;
-    }
-
-    .albumArt {
-        display: flex;
-        justify-content: center;  /* Center the content horizontally */
-        align-items: center;      /* Center the content vertically */
-        width: 100%;              /* Ensure it takes full width */
-        margin-bottom: 10px;      /* Add space below the image */
-    }
-    
-    .album img {
-        width: 100%;              /* Ensure the image scales to the container */
-        height: auto;             /* Maintain aspect ratio */
-        max-width: 300px;         /* Limit max width of the image */
-        display: block;           /* Remove extra space below image */
-        margin: 0 auto;           /* Center the image horizontally */
-    }
-
-    .album h3 {
-        font-size: 18px;  /* Keep the track title readable */
-        margin-bottom: 10px;
-        margin-top: 0;    /* Remove the margin-top to give it more space */
-        text-align: center; /* Center-align the track title */
-    }
-
-    .album p {
-        font-size: 14px;  
-    }
-
-    .album ul {
-        list-style-type: none; /* Remove default bullets */
-        padding: 0;
-    }
-
-    .album ul li {
-        display: flex; 
-        justify-content: flex-end; 
-        align-items: center; 
-        margin-bottom: 10px; 
-    }
-
-    .plTrack {
-        display: flex;
-        flex-direction: column;  /* Stack content vertically */
-        justify-content: center; /* Center content vertically */
-        align-items: center;     /* Center content horizontally */
-    }
-
-    .plTrackName {
-        font-size: 16px;   /* Adjust font size to make the title fit */
-        margin-bottom: 10px;  /* Add space between title and buttons */
-        text-align: center; /* Ensure the title is centered */
-    }
-
-    .plTracks {
-        margin-top: 1px;
-        margin-bottom: 1px;
     }
 
     .deleteBtn {
@@ -763,6 +662,106 @@ h3 {
 
     .deleteBtn:hover {
         background-color: darkred;
+    }
+
+    /* ==========================
+    5. (M) ALBUMS SECTION
+    ========================= */
+    .albums-container {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);  
+        gap: 20px;  
+        padding: 20px;  
+    }
+
+    /* =====================
+    10. (M) TRACKS SECTION
+    ===================== */
+
+    .trackPlayBtn, .trackQueueBtn, .plAddButton {
+        margin-left: 10px;
+        padding: 10px 20px; 
+        font-size: 18px;    
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: auto; 
+        display: inline-block; 
+        margin-bottom: 10px;
+    }
+
+    
+    .plAddButton:hover, .trackQueueBtn:hover, .trackPlayBtn:hover {
+        background-color: #45a049; 
+    }
+
+    .album {
+        display: flex;
+        flex-direction: column;  
+        justify-content: space-between; 
+        border: 1px solid #ddd;  
+        padding: 10px;
+        text-align: center;
+        background-color: #f9f9f9; 
+        color: black;
+        border-radius: 8px;
+    }
+
+    .albumArt {
+        display: flex;
+        justify-content: center;  
+        align-items: center;      
+        width: 100%;              
+        margin-bottom: 10px;      
+    }
+    
+    .album img {
+        width: 100%;              
+        height: auto;             
+        max-width: 300px;         
+        display: block;           
+        margin: 0 auto;           
+    }
+
+    .album h3 {
+        font-size: 18px;  
+        margin-bottom: 10px;
+        margin-top: 0;    
+        text-align: center; 
+    }
+
+    .album p {
+        font-size: 14px;  
+    }
+
+    .album ul {
+        list-style-type: none; 
+        padding: 0;
+    }
+
+    .album ul li {
+        display: flex; 
+        justify-content: flex-end; 
+        align-items: center; 
+        margin-bottom: 10px; 
+    }
+
+    .plTrack {
+        display: flex;
+        flex-direction: row;  
+        justify-content: space-between; 
+        align-items: center;     
+    }
+
+    .plTrackName {
+        font-size: 16px;  
+        margin-bottom: 10px;  
+        text-align: center; 
+    }
+
+    .plTracks {
+        margin-top: 1px;
+        margin-bottom: 1px;
     }
 
 }
