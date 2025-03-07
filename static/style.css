@@ -1,3 +1,13 @@
+/* =====================
+1. RESET / NORMALIZE
+===================== */
+   /* General reset for margin, padding, and box-sizing to ensure cross-browser consistency 
+   
+   */
+/* =====================
+2. GLOBAL STYLES
+===================== */
+
 header {
     background-color: black;
     color: #1DB954;
@@ -14,22 +24,28 @@ body {
 }
 
 .footer {
-    position: fixed;        /* Fixed positioning at the bottom */
-    bottom: 0;              /* Stick it to the bottom of the page */
-    left: 0;                /* Align it to the left edge */
-    width: 100%;            /* Make it full width */
-    height: 80px;          /* Set the height to 100px */
-    background-color: black; /* Background color (optional) */
-    display: flex;          /* Use flexbox to center content */
-    justify-content: center; /* Center the content horizontally */
-    align-items: center;    /* Center the content vertically */
+    position: relative;  
+    bottom: 0;           
+    width: 100%;         
+    height: 80px;        
+    background-color: black;  
+    display: flex;       
+    justify-content: center; 
+    align-items: center; 
 }
 
-.footer, img {
-    max-height: 80%;        /* Ensure the image is smaller than the footer */
-    object-fit: contain;    /* Ensure the image scales properly inside the footer */
+.footer img {
+    max-height: 80%;     
+    object-fit: contain; 
 }
 
+h3 {
+    margin-bottom: 5px;        
+}
+
+/* =====================
+3. TICKER AND USER
+===================== */
 .ticker {
     background-color: black;
     color: #1DB954;
@@ -41,7 +57,13 @@ body {
     margin-bottom: 5px;
 }
 
-/* The overlay container */
+.userDetails {
+    text-align: center;
+}
+
+/* =====================
+4. SEARCHING OVERLAY
+===================== */
 .overlay {
     display: none; /* Hidden by default */
     position: fixed;
@@ -71,9 +93,9 @@ body {
     100% { opacity: 1; }
 }
 
-.artistAlbums {
-    display: none;
-}
+/* =====================
+5. ARTIST SEARCH OVERLAY
+===================== */
 
 .artistSearchOverlay {
     position: fixed;
@@ -113,6 +135,10 @@ body {
 #artistSearchResultsList li:hover {
     background-color: #f1f1f1;
 }
+
+/* =====================
+6. SONG SEARCH OVERLAY
+===================== */
 
 .songContainer {
     display: flex;              
@@ -177,14 +203,14 @@ body {
     background-color: #f1f1f1;
 }
 
+/* =====================
+7. SEARCH SECTION
+===================== */
+
 #artistName, #songName {
     width: 250px;      
     height: 20px;      
     margin-bottom: 10px;
-}
-
-.userDetails {
-    text-align: center;
 }
 
 #sendSongBtn, #sendArtistBtn {
@@ -225,24 +251,27 @@ body {
     border-radius: 15px;
 }
   
-h3 {
-    margin-bottom: 5px;        
-}
-
 .searchContainer {
     display: flex;              
     justify-content: center;    
     flex-direction: row;
     align-items: center;        
     gap: 10px;                  
-  }
+}
+
+/* =====================
+8. ARTIST SECTION
+===================== */
+
+.artistAlbums {
+    display: none;
+}
 
 .artistSection {
     display: grid;
     grid-template-columns: 5fr 5fr 10fr;
     flex-direction: column;  
-    gap: 20px; 
-    
+    gap: 20px;     
 }
 
 .artistHeading {
@@ -302,6 +331,33 @@ h3 {
     box-sizing: border-box;
     flex: 2;
     justify-content: flex-start; 
+}
+
+.artistCol1Heading {
+    font-size: 2em;
+    font-family: Impact, fantasy; 
+    margin-top: 0; 
+    margin-bottom: 5px; 
+}
+
+.artistDetails {
+    display: flex;
+    gap: 20px; /* Add some space between image and info */
+}
+
+.artistImage img {
+    width: 300px; 
+    height: 300px; 
+    object-fit: cover; 
+}
+
+/* =====================
+8. PLAYLIST SECTION
+===================== */
+
+.playlist {
+    display: flex;
+    flex-direction: column;
 }
 
 #playlist {
@@ -370,13 +426,6 @@ h3 {
     height: 20px;      
 }
 
-.artistCol1Heading {
-    font-size: 2em;
-    font-family: Impact, fantasy; 
-    margin-top: 0; 
-    margin-bottom: 5px; 
-}
-
 .artistCol3Heading {
     display: flex; 
     flex-grow: 1;
@@ -386,22 +435,9 @@ h3 {
     margin-bottom: 1px; 
 }
 
-.artistDetails {
-    display: flex;
-    gap: 20px; /* Add some space between image and info */
-}
-
-.artistImage img {
-    width: 300px; 
-    height: 300px; 
-    object-fit: cover; 
-}
-
-.playlist {
-    display: flex;
-    flex-direction: column;
-
-}
+/* =====================
+9. ALBUMS SECTION
+===================== */
 
 .albums-container {
     display: grid;
@@ -445,6 +481,10 @@ h3 {
     align-items: center; 
     margin-bottom: 10px; 
 }
+
+/* =====================
+10. TRACKS SECTION
+===================== */
 
 .trackPlayBtn, .trackQueueBtn, .plAddButton {
     margin-left: 10px; /* Add some space between the track name and the button */
@@ -490,4 +530,91 @@ h3 {
 
 .deleteBtn:hover {
     background-color: darkred;
+}
+
+/* =====================
+   MOBILE DESIGN SECTION
+   ===================== */
+   @media (max-width: 768px) {
+
+    /* =====================
+    1. SEARCH SECTION
+    ===================== */
+
+    .searchSection {
+        flex-direction: column; /* Stack the search boxes vertically on mobile */
+        align-items: stretch;   /* Stretch them to fill the available width */
+    }
+
+    .songSearch, .artistSearch {
+        width: 90%; /* Make the search boxes take more space on mobile */
+        margin-bottom: 20px; /* Add spacing between the stacked boxes */
+    }
+
+    /* =====================
+    2. ARTIST SECTION
+    ===================== */
+
+    .artistColumns {
+        grid-template-columns: 1fr;  /* Only one column in the grid */
+        height: auto;  /* Adjust height for stacked layout */
+    }
+    
+    .artistImage, .artistInfo {
+        width: 100%; /* Make sure the elements take up the full width */
+        height: auto; /* Let the elements auto-size based on content */
+    }
+    
+    /* Adjusting the heading size */
+    .artistCol1Heading {
+        font-size: 1.5em; /* Slightly smaller font size for mobile */
+    }
+    
+/* ==========================
+    3. ARTIST DETAILS SECTION
+    ========================= */
+
+    .artistDetails {
+        flex-direction: column; /* Stack the details vertically on mobile */
+    }
+    
+    /* Making the buttons more responsive */
+    .clearPlaylistBtn, .createPlaylistBtn {
+        width: 100%; /* Make buttons full-width on smaller screens */
+        padding: 10px; /* Make buttons bigger for easier tapping */
+        margin-bottom: 10px;
+    }
+
+    .artistSection {
+        display: flex;
+        flex-direction: column;  /* Stack content vertically */
+        align-items: center;
+        gap: 20px;
+    }
+
+    .artistColumns {
+        display: flex;
+        flex-direction: column;  /* Stack the artist info and playlist vertically */
+        gap: 20px;
+        width: 100%;
+    }
+
+    /* Move the playlist buttons above the playlist when on mobile */
+    .artistHeading:nth-child(3) {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    #playlist {
+        margin-top: 20px;  /* Add space between buttons and playlist on mobile */
+    }
+
+    .createPlaylistBtn, .clearPlaylistBtn {
+        width: 100%;  /* Ensure buttons are full width on mobile */
+        padding: 10px;
+    }
+
 }

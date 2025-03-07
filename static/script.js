@@ -2,6 +2,12 @@
 let playlistDict = {}
 
 
+// Reload every 59 minutes to renew Spotify Token
+setInterval(function() {
+    location.reload();
+}, 3540000); 
+
+
 /**
  * Function Name: updateCurrentlyPlaying
  * 
