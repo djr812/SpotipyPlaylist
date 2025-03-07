@@ -75,6 +75,7 @@ def index():
     displayName = user["display_name"]
     followers = user["followers"]["total"]
 
+    code = ""
 
     return render_template(
         "index.html",

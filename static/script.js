@@ -251,6 +251,7 @@ function displayArtistAlbums(artistAlbumsDict) {
                         albumArtElement.alt = `Album art for ${albumData.albumName}`;
                         albumArtElement.style.maxWidth = '300px';
                         albumArtElement.style.maxHeight = '300px';
+                        albumArtElement.classList.add('albumArt')
 
                         // Append the image to the album section
                         albumsDiv.appendChild(albumArtElement);

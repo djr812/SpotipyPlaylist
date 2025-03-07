@@ -67,26 +67,37 @@
     <section>
         <div id="artist"> 
             <div class="artistSection">
-                <div class="artistHeading">
-                    <h3 class="artistCol1Heading"></h3>
+                <!-- Container for Col1Heading, Col2Heading, ArtistImage, and ArtistInfo -->
+                <div class="artistTopContainer">
+                    <div class="artistHeading">
+                        <h3 class="artistCol1Heading"></h3>
+                    </div>
+                    <!-- <div class="artistHeading">
+                        <h3 class="artistCol2Heading"> </h3>
+                    </div> -->
+                    <div class="artistColumns">
+                        <div class="artistImage">
+                            <!-- Artist Image content here -->
+                        </div>
+                        <div class="artistInfo">
+                            <!-- Artist Info content here -->
+                        </div>
+                    </div>
                 </div>
-                <div class="artistHeading">
-                    <h3 class="artistCol2Heading"> </h3>
-                </div>
-                <div class="artistHeading">
-                    <h3 class="artistCol3Heading">Playlist Builder</h3>
-                    <button type="button" onclick="createPlaylist()" class="createPlaylistBtn">Create Playlist</button>
-                    <button typw="button" onclick="clearPL()" class="clearPlaylistBtn">Clear</button>
+            
+                <!-- Container for Col3Heading and Playlist -->
+                <div class="artistBottomContainer">
+                    <div class="artistHeading">
+                        <h3 class="artistCol3Heading">Playlist Builder</h3>
+                        <button type="button" onclick="createPlaylist()" class="createPlaylistBtn">Create Playlist</button>
+                        <button type="button" onclick="clearPL()" class="clearPlaylistBtn">Clear</button>
+                    </div>
+                    <div id="playlist">
+                        <!-- Playlist content here -->
+                    </div>
                 </div>
             </div>
-            <div class="artistColumns">
-                <div class="artistImage">
-                </div>
-                <div class="artistInfo">
-                </div>
-                <div id="playlist">
-                </div>
-            </div>              
+                          
         </div>
         <div id="artistAlbums">
         </div>
